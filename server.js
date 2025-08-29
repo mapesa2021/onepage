@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 // Middleware
 app.use(cors());
@@ -222,10 +223,12 @@ app.get('/health', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, HOST, () => {
     console.log(`Server running on port ${PORT}`);
     console.log(`Health check: http://localhost:${PORT}/health`);
-    console.log(`Mobile access: http://192.168.100.14:${PORT}/health`);
+    if (process.env.NODE_ENV !== 'production') {
+        console.log(`Mobile access: http://192.168.100.14:${PORT}/health`);
+    }
 });
 
 module.exports = app;
