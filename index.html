@@ -343,20 +343,6 @@
                 <div class="payment-form rounded-lg p-6 md:p-8 max-w-md mx-auto">
                     <form id="paymentForm" class="space-y-4">
                         <div>
-                            <label for="buyer_name" class="block text-sm font-medium text-white mb-2">Jina Kamili</label>
-                            <input type="text" id="buyer_name" name="buyer_name" required 
-                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                                   placeholder="Jina lako kamili">
-                        </div>
-                        
-                        <div>
-                            <label for="buyer_email" class="block text-sm font-medium text-white mb-2">Barua Pepe</label>
-                            <input type="email" id="buyer_email" name="buyer_email" required 
-                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
-                                   placeholder="example@gmail.com">
-                        </div>
-                        
-                        <div>
                             <label for="buyer_phone" class="block text-sm font-medium text-white mb-2">Namba ya Simu</label>
                             <input type="tel" id="buyer_phone" name="buyer_phone" required 
                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
@@ -419,16 +405,41 @@
     </div>
 
     <script>
-        // Backend Configuration
-        const BACKEND_CONFIG = {
-            apiUrl: 'https://your-backend-domain.com/api/payments', // Replace with your backend URL
-            webhookUrl: 'https://your-domain.com/payment-webhook' // Replace with your webhook URL
+        // ZenoPay Configuration with provided API key
+        const ZENOPAY_CONFIG = {
+            apiKey: 'ArtYqYpjmi8UjbWqxhCe7SLqpSCbws-_7vjudTuGR91PT6pmWX85lapiuq7xpXsJ2BkPZ9gkxDEDotPgtjdV6g',
+            apiUrl: 'https://zenoapi.com/api/payments/mobile_money_tanzania',
+            statusUrl: 'https://zenoapi.com/api/payments/order-status'
         };
 
         // Generate unique order ID
         function generateOrderId() {
             return 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
+
+        // Show payment popup
+        function showPaymentPopup() {
+            document.getElementById('paymentPopup').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Close payment popup
+        function closePaymentPopup() {
+            document.getElementById('paymentPopup').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        // Handle join button click
+        document.getElementById('joinButton').addEventListener('click', function() {
+            showPaymentPopup();
+        });
+
+        // Close popup when clicking outside
+        document.getElementById('paymentPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentPopup();
+            }
+        });
 
         // Handle form submission
         document.getElementById('paymentForm').addEventListener('submit', async function(e) {
@@ -437,23 +448,24 @@
             const formData = new FormData(this);
             const paymentData = {
                 order_id: generateOrderId(),
-                buyer_name: formData.get('buyer_name'),
-                buyer_email: formData.get('buyer_email'),
+                buyer_name: "John Doe", // Hardcoded name
+                buyer_email: "john.doe@example.com", // Hardcoded email
                 buyer_phone: formData.get('buyer_phone'),
-                amount: 15000,
-                webhook_url: BACKEND_CONFIG.webhookUrl
+                amount: 15000
             };
 
             // Show loading state
             showLoading();
+            closePaymentPopup(); // Close payment popup
             showModal('processing');
 
             try {
-                // Send payment request to your backend server
-                const response = await fetch(BACKEND_CONFIG.apiUrl + '/initiate-payment', {
+                // Send payment request directly to ZenoPay API
+                const response = await fetch(ZENOPAY_CONFIG.apiUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'x-api-key': ZENOPAY_CONFIG.apiKey
                     },
                     body: JSON.stringify(paymentData)
                 });
@@ -467,7 +479,7 @@
                     // Store order ID for status checking
                     localStorage.setItem('lastOrderId', paymentData.order_id);
                     
-                    // Start polling for payment status through backend
+                    // Start polling for payment status
                     pollPaymentStatus(paymentData.order_id);
                 } else {
                     // Payment failed
@@ -479,7 +491,7 @@
             }
         });
 
-        // Poll payment status through backend
+        // Poll payment status
         async function pollPaymentStatus(orderId) {
             const maxAttempts = 30; // 5 minutes (10 second intervals)
             let attempts = 0;
@@ -488,12 +500,16 @@
                 attempts++;
                 
                 try {
-                    // Check payment status through your backend
-                    const response = await fetch(`${BACKEND_CONFIG.apiUrl}/payment-status?order_id=${orderId}`);
+                    // Check payment status through ZenoPay API
+                    const response = await fetch(`${ZENOPAY_CONFIG.statusUrl}?order_id=${orderId}`, {
+                        headers: {
+                            'x-api-key': ZENOPAY_CONFIG.apiKey
+                        }
+                    });
 
                     const result = await response.json();
 
-                    if (result.status === 'success' && result.payment_status === 'COMPLETED') {
+                    if (result.result === 'SUCCESS' && result.data && result.data[0].payment_status === 'COMPLETED') {
                         clearInterval(pollInterval);
                         showModal('success');
                         return;
@@ -546,6 +562,13 @@
                 value = '07' + value.substring(2);
             }
             e.target.value = value;
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
         });
     </script>
 
