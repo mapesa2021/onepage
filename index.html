@@ -451,7 +451,8 @@
     <script>
         // Backend Configuration (to avoid CORS issues)
         const BACKEND_CONFIG = {
-            apiUrl: 'http://localhost:3000/api/payments', // Local development
+            apiUrl: 'http://192.168.100.14:3000/api/payments', // Local development with IP for mobile access
+            // apiUrl: 'http://localhost:3000/api/payments', // Local development (desktop only)
             // apiUrl: 'https://your-backend-domain.com/api/payments', // Production
             webhookUrl: 'https://your-domain.com/payment-webhook'
         };
