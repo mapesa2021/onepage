@@ -449,11 +449,11 @@
     </div>
 
     <script>
-        // ZenoPay Configuration with provided API key
-        const ZENOPAY_CONFIG = {
-            apiKey: 'ArtYqYpjmi8UjbWqxhCe7SLqpSCbws-_7vjudTuGR91PT6pmWX85lapiuq7xpXsJ2BkPZ9gkxDEDotPgtjdV6g',
-            apiUrl: 'https://zenoapi.com/api/payments/mobile_money_tanzania',
-            statusUrl: 'https://zenoapi.com/api/payments/order-status'
+        // Backend Configuration (to avoid CORS issues)
+        const BACKEND_CONFIG = {
+            apiUrl: 'http://localhost:3000/api/payments', // Local development
+            // apiUrl: 'https://your-backend-domain.com/api/payments', // Production
+            webhookUrl: 'https://your-domain.com/payment-webhook'
         };
 
         // Generate unique order ID
@@ -506,14 +506,16 @@
             try {
                 console.log('Sending payment request:', paymentData);
                 
-                // Send payment request directly to ZenoPay API
-                const response = await fetch(ZENOPAY_CONFIG.apiUrl, {
+                // Send payment request to backend server
+                const response = await fetch(BACKEND_CONFIG.apiUrl + '/initiate-payment', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': ZENOPAY_CONFIG.apiKey
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(paymentData)
+                    body: JSON.stringify({
+                        ...paymentData,
+                        webhook_url: BACKEND_CONFIG.webhookUrl
+                    })
                 });
 
                 console.log('Response status:', response.status);
@@ -522,7 +524,7 @@
                 const result = await response.json();
                 console.log('Payment response:', result);
 
-                if (result.status === 'success' || result.resultcode === '000') {
+                if (result.status === 'success') {
                     // Payment initiated successfully
                     console.log('Payment initiated successfully:', result);
                     
@@ -552,18 +554,14 @@
                 console.log(`Checking payment status (attempt ${attempts}/${maxAttempts}) for order: ${orderId}`);
                 
                 try {
-                    // Check payment status through ZenoPay API
-                    const response = await fetch(`${ZENOPAY_CONFIG.statusUrl}?order_id=${orderId}`, {
-                        headers: {
-                            'x-api-key': ZENOPAY_CONFIG.apiKey
-                        }
-                    });
+                    // Check payment status through backend
+                    const response = await fetch(`${BACKEND_CONFIG.apiUrl}/payment-status?order_id=${orderId}`);
 
                     const result = await response.json();
                     console.log('Status check response:', result);
 
                     // Check for completed payment
-                    if (result.result === 'SUCCESS' && result.data && result.data[0] && result.data[0].payment_status === 'COMPLETED') {
+                    if (result.status === 'success' && result.payment_status === 'COMPLETED') {
                         clearInterval(pollInterval);
                         console.log('Payment completed successfully!');
                         showModal('success');
@@ -571,7 +569,7 @@
                     }
 
                     // Check for failed payment
-                    if (result.result === 'SUCCESS' && result.data && result.data[0] && result.data[0].payment_status === 'FAILED') {
+                    if (result.status === 'success' && result.payment_status === 'FAILED') {
                         clearInterval(pollInterval);
                         console.log('Payment failed');
                         showModal('error', 'Malipo hayajafanikiwa. Jaribu tena.');
@@ -638,7 +636,7 @@
         // Test API function
         async function testAPI() {
             try {
-                console.log('Testing API connection...');
+                console.log('Testing backend connection...');
                 const testData = {
                     order_id: 'test_' + Date.now(),
                     buyer_email: 'test@example.com',
@@ -647,23 +645,25 @@
                     amount: 1000
                 };
                 
-                const response = await fetch(ZENOPAY_CONFIG.apiUrl, {
+                const response = await fetch(BACKEND_CONFIG.apiUrl + '/initiate-payment', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': ZENOPAY_CONFIG.apiKey
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(testData)
+                    body: JSON.stringify({
+                        ...testData,
+                        webhook_url: BACKEND_CONFIG.webhookUrl
+                    })
                 });
                 
                 console.log('Test response status:', response.status);
                 const result = await response.json();
                 console.log('Test API response:', result);
                 
-                alert('API Test Result: ' + JSON.stringify(result, null, 2));
+                alert('Backend Test Result: ' + JSON.stringify(result, null, 2));
             } catch (error) {
-                console.error('API test error:', error);
-                alert('API Test Error: ' + error.message);
+                console.error('Backend test error:', error);
+                alert('Backend Test Error: ' + error.message);
             }
         }
     </script>
