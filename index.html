@@ -434,7 +434,15 @@
                         <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
                         <h3 class="text-xl font-bold text-gray-900 mb-2">Malipo Yamefanikiwa!</h3>
                         <p class="text-gray-600 mb-4">Video yako itatumwa kwenye barua pepe yako</p>
-                        <button onclick="closeModal()" class="bg-green-500 text-white px-6 py-2 rounded-lg">Sawa</button>
+                        <div class="space-y-3">
+                            <button onclick="redirectToWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg w-full font-semibold">
+                                <i class="fab fa-whatsapp mr-2"></i>
+                                Jiunge na WhatsApp
+                            </button>
+                            <button onclick="closeModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg w-full">
+                                Funga
+                            </button>
+                        </div>
                     </div>
                     
                     <div id="errorStatus" class="hidden">
@@ -633,6 +641,20 @@
                 closeModal();
             }
         });
+
+        // Redirect to WhatsApp after successful payment
+        function redirectToWhatsApp() {
+            const phoneNumber = '255754546567';
+            const message = encodeURIComponent('Habari! Nimefanikiwa kulipa Tsh 15,000 kwa video ya "Wealth Creation with Digital Assets". Tafadhali nitumie video hiyo.');
+            
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+            
+            // Open WhatsApp in new tab
+            window.open(whatsappUrl, '_blank');
+            
+            // Close the payment modal
+            closeModal();
+        }
 
         // Test API function
         async function testAPI() {
