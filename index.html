@@ -48,6 +48,17 @@
             background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
             border-left: 4px solid #ef4444;
         }
+        .payment-form {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .loading {
+            display: none;
+        }
+        .loading.show {
+            display: inline-block;
+        }
     </style>
 </head>
 <body class="bg-white text-gray-900">
@@ -288,7 +299,7 @@
         </div>
     </section>
 
-    <!-- Final CTA Section -->
+    <!-- Payment Form Section -->
     <section class="gradient-bg text-white section-padding">
         <div class="container-max mx-auto px-4 md:px-6">
             <div class="max-w-4xl mx-auto text-center">
@@ -323,16 +334,53 @@
                         </p>
                         
                         <p class="text-xl font-semibold">
-                            🚀 Bofya hapa chini sasa, ujihakikishie nafasi yako na uanze safari ya kujijengea biashara ya kidigitali inayokuingizia kipato hata ukiwa umelala.
+                            🚀 Jaza fomu hapa chini na ulipe kupitia Mobile Money:
                         </p>
                     </div>
                 </div>
-                
-                <!-- Final CTA Button -->
-                <button class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 md:py-6 px-8 md:px-12 text-xl md:text-2xl rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl">
-                    <i class="fas fa-rocket mr-2 md:mr-3"></i>
-                    Jiunge Sasa - Tsh 15,000
-                </button>
+
+                <!-- Payment Form -->
+                <div class="payment-form rounded-lg p-6 md:p-8 max-w-md mx-auto">
+                    <form id="paymentForm" class="space-y-4">
+                        <div>
+                            <label for="buyer_name" class="block text-sm font-medium text-white mb-2">Jina Kamili</label>
+                            <input type="text" id="buyer_name" name="buyer_name" required 
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                                   placeholder="Jina lako kamili">
+                        </div>
+                        
+                        <div>
+                            <label for="buyer_email" class="block text-sm font-medium text-white mb-2">Barua Pepe</label>
+                            <input type="email" id="buyer_email" name="buyer_email" required 
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                                   placeholder="example@gmail.com">
+                        </div>
+                        
+                        <div>
+                            <label for="buyer_phone" class="block text-sm font-medium text-white mb-2">Namba ya Simu</label>
+                            <input type="tel" id="buyer_phone" name="buyer_phone" required 
+                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                                   placeholder="07XXXXXXXX">
+                        </div>
+                        
+                        <div class="bg-yellow-400 text-gray-900 p-4 rounded-lg">
+                            <p class="font-bold text-lg">Bei: Tsh 15,000</p>
+                            <p class="text-sm">Lipia kupitia M-Pesa, Airtel Money, au Tigo Pesa</p>
+                        </div>
+                        
+                        <button type="submit" id="payButton" 
+                                class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 text-xl rounded-lg transition-all duration-300 transform hover:scale-105 shadow-xl">
+                            <span id="buttonText">
+                                <i class="fas fa-mobile-alt mr-2"></i>
+                                Lipia Sasa - Tsh 15,000
+                            </span>
+                            <span id="loadingText" class="loading">
+                                <i class="fas fa-spinner fa-spin mr-2"></i>
+                                Inatumwa...
+                            </span>
+                        </button>
+                    </form>
+                </div>
                 
                 <p class="text-gray-300 mt-3 md:mt-4 text-sm">
                     Nafasi 20 pekee • Bei inarudi 45,000 Tsh mara tu nafasi zikijaa
@@ -340,6 +388,171 @@
             </div>
         </div>
     </section>
+
+    <!-- Payment Status Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg p-6 md:p-8 max-w-md w-full">
+                <div id="paymentStatus" class="text-center">
+                    <div id="processingStatus">
+                        <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Inatumwa...</h3>
+                        <p class="text-gray-600">Tafadhali subiri, tunatumia malipo yako</p>
+                    </div>
+                    
+                    <div id="successStatus" class="hidden">
+                        <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Malipo Yamefanikiwa!</h3>
+                        <p class="text-gray-600 mb-4">Video yako itatumwa kwenye barua pepe yako</p>
+                        <button onclick="closeModal()" class="bg-green-500 text-white px-6 py-2 rounded-lg">Sawa</button>
+                    </div>
+                    
+                    <div id="errorStatus" class="hidden">
+                        <i class="fas fa-times-circle text-4xl text-red-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Kuna Tatizo</h3>
+                        <p id="errorMessage" class="text-gray-600 mb-4">Malipo hayajafanikiwa</p>
+                        <button onclick="closeModal()" class="bg-red-500 text-white px-6 py-2 rounded-lg">Jaribu Tena</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ZenoPay Configuration
+        const ZENOPAY_CONFIG = {
+            apiKey: 'YOUR_API_KEY', // Replace with your actual API key
+            apiUrl: 'https://zenoapi.com/api/payments/mobile_money_tanzania',
+            webhookUrl: 'https://your-domain.com/payment-webhook' // Replace with your webhook URL
+        };
+
+        // Generate unique order ID
+        function generateOrderId() {
+            return 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Handle form submission
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const paymentData = {
+                order_id: generateOrderId(),
+                buyer_name: formData.get('buyer_name'),
+                buyer_email: formData.get('buyer_email'),
+                buyer_phone: formData.get('buyer_phone'),
+                amount: 15000,
+                webhook_url: ZENOPAY_CONFIG.webhookUrl
+            };
+
+            // Show loading state
+            showLoading();
+            showModal('processing');
+
+            try {
+                const response = await fetch(ZENOPAY_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': ZENOPAY_CONFIG.apiKey
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Payment initiated successfully
+                    showModal('success');
+                    console.log('Payment initiated:', result);
+                    
+                    // Store order ID for status checking
+                    localStorage.setItem('lastOrderId', paymentData.order_id);
+                    
+                    // Start polling for payment status
+                    pollPaymentStatus(paymentData.order_id);
+                } else {
+                    // Payment failed
+                    showModal('error', result.message || 'Malipo hayajafanikiwa');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                showModal('error', 'Kuna tatizo la mtandao. Jaribu tena.');
+            }
+        });
+
+        // Poll payment status
+        async function pollPaymentStatus(orderId) {
+            const maxAttempts = 30; // 5 minutes (10 second intervals)
+            let attempts = 0;
+
+            const pollInterval = setInterval(async () => {
+                attempts++;
+                
+                try {
+                    const response = await fetch(`${ZENOPAY_CONFIG.apiUrl.replace('/mobile_money_tanzania', '/order-status')}?order_id=${orderId}`, {
+                        headers: {
+                            'x-api-key': ZENOPAY_CONFIG.apiKey
+                        }
+                    });
+
+                    const result = await response.json();
+
+                    if (result.result === 'SUCCESS' && result.data && result.data[0].payment_status === 'COMPLETED') {
+                        clearInterval(pollInterval);
+                        showModal('success');
+                        return;
+                    }
+
+                    if (attempts >= maxAttempts) {
+                        clearInterval(pollInterval);
+                        showModal('error', 'Malipo hayajakamilika. Jaribu tena.');
+                    }
+                } catch (error) {
+                    console.error('Status check error:', error);
+                }
+            }, 10000); // Check every 10 seconds
+        }
+
+        // Show loading state
+        function showLoading() {
+            document.getElementById('buttonText').classList.add('loading');
+            document.getElementById('loadingText').classList.add('show');
+            document.getElementById('payButton').disabled = true;
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.getElementById('buttonText').classList.remove('loading');
+            document.getElementById('loadingText').classList.remove('show');
+            document.getElementById('payButton').disabled = false;
+        }
+
+        // Show modal
+        function showModal(status) {
+            document.getElementById('paymentModal').classList.remove('hidden');
+            document.getElementById('processingStatus').classList.add('hidden');
+            document.getElementById('successStatus').classList.add('hidden');
+            document.getElementById('errorStatus').classList.add('hidden');
+            
+            document.getElementById(`${status}Status`).classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+            hideLoading();
+        }
+
+        // Phone number validation
+        document.getElementById('buyer_phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0 && !value.startsWith('07')) {
+                value = '07' + value.substring(2);
+            }
+            e.target.value = value;
+        });
+    </script>
 
 </body>
 </html>
