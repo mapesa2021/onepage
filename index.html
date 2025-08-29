@@ -419,10 +419,9 @@
     </div>
 
     <script>
-        // ZenoPay Configuration
-        const ZENOPAY_CONFIG = {
-            apiKey: 'YOUR_API_KEY', // Replace with your actual API key
-            apiUrl: 'https://zenoapi.com/api/payments/mobile_money_tanzania',
+        // Backend Configuration
+        const BACKEND_CONFIG = {
+            apiUrl: 'https://your-backend-domain.com/api/payments', // Replace with your backend URL
             webhookUrl: 'https://your-domain.com/payment-webhook' // Replace with your webhook URL
         };
 
@@ -442,7 +441,7 @@
                 buyer_email: formData.get('buyer_email'),
                 buyer_phone: formData.get('buyer_phone'),
                 amount: 15000,
-                webhook_url: ZENOPAY_CONFIG.webhookUrl
+                webhook_url: BACKEND_CONFIG.webhookUrl
             };
 
             // Show loading state
@@ -450,11 +449,11 @@
             showModal('processing');
 
             try {
-                const response = await fetch(ZENOPAY_CONFIG.apiUrl, {
+                // Send payment request to your backend server
+                const response = await fetch(BACKEND_CONFIG.apiUrl + '/initiate-payment', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': ZENOPAY_CONFIG.apiKey
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(paymentData)
                 });
@@ -463,13 +462,12 @@
 
                 if (result.status === 'success') {
                     // Payment initiated successfully
-                    showModal('success');
                     console.log('Payment initiated:', result);
                     
                     // Store order ID for status checking
                     localStorage.setItem('lastOrderId', paymentData.order_id);
                     
-                    // Start polling for payment status
+                    // Start polling for payment status through backend
                     pollPaymentStatus(paymentData.order_id);
                 } else {
                     // Payment failed
@@ -481,7 +479,7 @@
             }
         });
 
-        // Poll payment status
+        // Poll payment status through backend
         async function pollPaymentStatus(orderId) {
             const maxAttempts = 30; // 5 minutes (10 second intervals)
             let attempts = 0;
@@ -490,15 +488,12 @@
                 attempts++;
                 
                 try {
-                    const response = await fetch(`${ZENOPAY_CONFIG.apiUrl.replace('/mobile_money_tanzania', '/order-status')}?order_id=${orderId}`, {
-                        headers: {
-                            'x-api-key': ZENOPAY_CONFIG.apiKey
-                        }
-                    });
+                    // Check payment status through your backend
+                    const response = await fetch(`${BACKEND_CONFIG.apiUrl}/payment-status?order_id=${orderId}`);
 
                     const result = await response.json();
 
-                    if (result.result === 'SUCCESS' && result.data && result.data[0].payment_status === 'COMPLETED') {
+                    if (result.status === 'success' && result.payment_status === 'COMPLETED') {
                         clearInterval(pollInterval);
                         showModal('success');
                         return;
