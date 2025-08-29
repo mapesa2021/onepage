@@ -1,271 +1,559 @@
 const express = require('express');
 const cors = require('cors');
-const axios = require('axios');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const { createClient } = require('@supabase/supabase-js');
+const { v4: uuidv4 } = require('uuid');
+const multer = require('multer');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || '0.0.0.0';
 
-// Middleware
-app.use(cors());
-app.use(express.json());
+// Initialize Supabase
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
-// ZenoPay Configuration (stored securely in environment variables)
-const ZENOPAY_CONFIG = {
-    apiKey: process.env.ZENOPAY_API_KEY,
-    apiUrl: 'https://zenoapi.com/api/payments/mobile_money_tanzania',
-    statusUrl: 'https://zenoapi.com/api/payments/order-status'
+// Middleware
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined'));
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  credentials: true
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use('/api/', limiter);
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// Static files
+app.use(express.static('public'));
+
+// Authentication middleware
+const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(403).json({ error: 'Invalid token' });
+  }
 };
 
-// Store pending payments (in production, use a database)
-const pendingPayments = new Map();
+// Routes
 
-// Initiate Payment Endpoint
-app.post('/api/payments/initiate-payment', async (req, res) => {
-    try {
-        const { order_id, buyer_name, buyer_email, buyer_phone, amount, webhook_url } = req.body;
-
-        // Validate required fields
-        if (!buyer_name || !buyer_email || !buyer_phone || !amount) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'Missing required fields'
-            });
-        }
-
-        // Validate phone number format
-        if (!buyer_phone.match(/^07\d{8}$/)) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'Invalid phone number format. Use 07XXXXXXXX'
-            });
-        }
-
-        // Prepare payment data for ZenoPay
-        const paymentData = {
-            order_id,
-            buyer_name,
-            buyer_email,
-            buyer_phone,
-            amount,
-            webhook_url: process.env.WEBHOOK_URL || webhook_url
-        };
-
-        // Check if this is a test payment for your phone number
-        if (buyer_phone === '0750278741') {
-            console.log('Test payment detected for phone: 0750278741');
-            
-            // Simulate successful payment for test user
-            const testResult = {
-                status: 'success',
-                message: 'Test payment successful',
-                order_id: order_id
-            };
-
-            // Store payment info for status checking
-            pendingPayments.set(order_id, {
-                buyer_name,
-                buyer_email,
-                buyer_phone,
-                amount,
-                status: 'COMPLETED', // Mark as completed for test
-                created_at: new Date(),
-                is_test: true
-            });
-
-            return res.json(testResult);
-        }
-
-        // Call ZenoPay API for real payments
-        const zenoPayResponse = await axios.post(ZENOPAY_CONFIG.apiUrl, paymentData, {
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': ZENOPAY_CONFIG.apiKey
-            }
-        });
-
-        const zenoPayResult = zenoPayResponse.data;
-
-        if (zenoPayResult.status === 'success') {
-            // Store payment info for status checking
-            pendingPayments.set(order_id, {
-                buyer_name,
-                buyer_email,
-                buyer_phone,
-                amount,
-                status: 'PENDING',
-                created_at: new Date()
-            });
-
-            // Return success to frontend
-            res.json({
-                status: 'success',
-                message: 'Payment initiated successfully',
-                order_id: order_id
-            });
-        } else {
-            res.status(400).json({
-                status: 'error',
-                message: zenoPayResult.message || 'Payment initiation failed'
-            });
-        }
-
-    } catch (error) {
-        console.error('Payment initiation error:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Internal server error'
-        });
-    }
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    version: '2.0.0'
+  });
 });
 
-// Check Payment Status Endpoint
-app.get('/api/payments/payment-status', async (req, res) => {
-    try {
-        const { order_id } = req.query;
+// User Registration
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { email, password, name } = req.body;
 
-        if (!order_id) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'Order ID is required'
-            });
-        }
-
-        // Check if this is a test payment
-        if (pendingPayments.has(order_id)) {
-            const localPayment = pendingPayments.get(order_id);
-            if (localPayment.is_test && localPayment.status === 'COMPLETED') {
-                return res.json({
-                    status: 'success',
-                    payment_status: 'COMPLETED',
-                    message: 'Test payment completed successfully'
-                });
-            }
-        }
-
-        // Check ZenoPay for payment status
-        const zenoPayResponse = await axios.get(`${ZENOPAY_CONFIG.statusUrl}?order_id=${order_id}`, {
-            headers: {
-                'x-api-key': ZENOPAY_CONFIG.apiKey
-            }
-        });
-
-        const zenoPayResult = zenoPayResponse.data;
-
-        if (zenoPayResult.result === 'SUCCESS' && zenoPayResult.data && zenoPayResult.data[0]) {
-            const paymentData = zenoPayResult.data[0];
-            
-            // Update local payment status
-            if (pendingPayments.has(order_id)) {
-                const localPayment = pendingPayments.get(order_id);
-                localPayment.status = paymentData.payment_status;
-                pendingPayments.set(order_id, localPayment);
-            }
-
-            res.json({
-                status: 'success',
-                payment_status: paymentData.payment_status,
-                reference: paymentData.reference,
-                channel: paymentData.channel
-            });
-        } else {
-            res.json({
-                status: 'pending',
-                payment_status: 'PENDING'
-            });
-        }
-
-    } catch (error) {
-        console.error('Status check error:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Failed to check payment status'
-        });
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: 'All fields are required' });
     }
+
+    // Check if user already exists
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (existingUser) {
+      return res.status(400).json({ error: 'User already exists' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 12);
+
+    // Create user
+    const { data: user, error } = await supabase
+      .from('users')
+      .insert([
+        {
+          id: uuidv4(),
+          email,
+          password: hashedPassword,
+          name,
+          created_at: new Date().toISOString()
+        }
+      ])
+      .select('id, email, name, created_at')
+      .single();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to create user' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.status(201).json({
+      message: 'User created successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      },
+      token
+    });
+
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-// Webhook Endpoint (for ZenoPay callbacks)
-app.post('/api/payments/webhook', async (req, res) => {
-    try {
-        // Verify webhook authenticity (check x-api-key header)
-        const apiKey = req.headers['x-api-key'];
-        if (apiKey !== ZENOPAY_CONFIG.apiKey) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
+// User Login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        const { order_id, payment_status, reference, metadata } = req.body;
-
-        console.log('Webhook received:', {
-            order_id,
-            payment_status,
-            reference,
-            metadata
-        });
-
-        // Update payment status
-        if (pendingPayments.has(order_id)) {
-            const payment = pendingPayments.get(order_id);
-            payment.status = payment_status;
-            payment.reference = reference;
-            payment.updated_at = new Date();
-            pendingPayments.set(order_id, payment);
-
-            // If payment is completed, send email with course access
-            if (payment_status === 'COMPLETED') {
-                await sendCourseAccessEmail(payment.buyer_email, payment.buyer_name);
-            }
-        }
-
-        res.json({ status: 'success' });
-
-    } catch (error) {
-        console.error('Webhook error:', error);
-        res.status(500).json({ error: 'Webhook processing failed' });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password required' });
     }
+
+    // Get user
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name
+      },
+      token
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
-// Send course access email (implement your email service)
-async function sendCourseAccessEmail(email, name) {
-    try {
-        // Implement your email service here (SendGrid, Mailgun, etc.)
-        console.log(`Sending course access email to ${email} for ${name}`);
-        
-        // Example email content:
-        // - Course video link
-        // - Login credentials
-        // - Support contact
-        
-    } catch (error) {
-        console.error('Email sending error:', error);
+// Get user profile
+app.get('/api/auth/profile', authenticateToken, async (req, res) => {
+  try {
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('id, email, name, created_at')
+      .eq('id', req.user.userId)
+      .single();
+
+    if (error || !user) {
+      return res.status(404).json({ error: 'User not found' });
     }
+
+    res.json({ user });
+
+  } catch (error) {
+    console.error('Profile error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Create landing page
+app.post('/api/pages', authenticateToken, async (req, res) => {
+  try {
+    const { title, description, components, settings } = req.body;
+    const pageId = uuidv4();
+    const customUrl = generateCustomUrl(title);
+
+    const { data: page, error } = await supabase
+      .from('pages')
+      .insert([
+        {
+          id: pageId,
+          user_id: req.user.userId,
+          title,
+          description,
+          components: JSON.stringify(components),
+          settings: JSON.stringify(settings),
+          custom_url: customUrl,
+          public_url: `${process.env.BASE_URL}/page/${pageId}`,
+          status: 'draft',
+          created_at: new Date().toISOString()
+        }
+      ])
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to create page' });
+    }
+
+    res.status(201).json({
+      message: 'Page created successfully',
+      page: {
+        ...page,
+        components: JSON.parse(page.components),
+        settings: JSON.parse(page.settings)
+      }
+    });
+
+  } catch (error) {
+    console.error('Create page error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get user's pages
+app.get('/api/pages', authenticateToken, async (req, res) => {
+  try {
+    const { data: pages, error } = await supabase
+      .from('pages')
+      .select('*')
+      .eq('user_id', req.user.userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to fetch pages' });
+    }
+
+    const formattedPages = pages.map(page => ({
+      ...page,
+      components: JSON.parse(page.components),
+      settings: JSON.parse(page.settings)
+    }));
+
+    res.json({ pages: formattedPages });
+
+  } catch (error) {
+    console.error('Get pages error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get specific page
+app.get('/api/pages/:id', authenticateToken, async (req, res) => {
+  try {
+    const { data: page, error } = await supabase
+      .from('pages')
+      .select('*')
+      .eq('id', req.params.id)
+      .eq('user_id', req.user.userId)
+      .single();
+
+    if (error || !page) {
+      return res.status(404).json({ error: 'Page not found' });
+    }
+
+    res.json({
+      page: {
+        ...page,
+        components: JSON.parse(page.components),
+        settings: JSON.parse(page.settings)
+      }
+    });
+
+  } catch (error) {
+    console.error('Get page error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Update page
+app.put('/api/pages/:id', authenticateToken, async (req, res) => {
+  try {
+    const { title, description, components, settings, status } = req.body;
+
+    const { data: page, error } = await supabase
+      .from('pages')
+      .update({
+        title,
+        description,
+        components: JSON.stringify(components),
+        settings: JSON.stringify(settings),
+        status,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', req.params.id)
+      .eq('user_id', req.user.userId)
+      .select('*')
+      .single();
+
+    if (error || !page) {
+      return res.status(404).json({ error: 'Page not found' });
+    }
+
+    res.json({
+      message: 'Page updated successfully',
+      page: {
+        ...page,
+        components: JSON.parse(page.components),
+        settings: JSON.parse(page.settings)
+      }
+    });
+
+  } catch (error) {
+    console.error('Update page error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete page
+app.delete('/api/pages/:id', authenticateToken, async (req, res) => {
+  try {
+    const { error } = await supabase
+      .from('pages')
+      .delete()
+      .eq('id', req.params.id)
+      .eq('user_id', req.user.userId);
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return res.status(500).json({ error: 'Failed to delete page' });
+    }
+
+    res.json({ message: 'Page deleted successfully' });
+
+  } catch (error) {
+    console.error('Delete page error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Public page access
+app.get('/page/:id', async (req, res) => {
+  try {
+    const { data: page, error } = await supabase
+      .from('pages')
+      .select('*')
+      .eq('id', req.params.id)
+      .eq('status', 'published')
+      .single();
+
+    if (error || !page) {
+      return res.status(404).send(`
+        <html>
+          <head><title>Page Not Found</title></head>
+          <body>
+            <h1>Page Not Found</h1>
+            <p>This page doesn't exist or is not published.</p>
+          </body>
+        </html>
+      `);
+    }
+
+    // Generate HTML for the page
+    const html = generatePageHTML(page);
+    res.send(html);
+
+  } catch (error) {
+    console.error('Public page error:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+// Custom URL access
+app.get('/:customUrl', async (req, res) => {
+  try {
+    const { data: page, error } = await supabase
+      .from('pages')
+      .select('*')
+      .eq('custom_url', req.params.customUrl)
+      .eq('status', 'published')
+      .single();
+
+    if (error || !page) {
+      return res.status(404).send(`
+        <html>
+          <head><title>Page Not Found</title></head>
+          <body>
+            <h1>Page Not Found</h1>
+            <p>This page doesn't exist or is not published.</p>
+          </body>
+        </html>
+      `);
+    }
+
+    // Generate HTML for the page
+    const html = generatePageHTML(page);
+    res.send(html);
+
+  } catch (error) {
+    console.error('Custom URL error:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+// Analytics tracking
+app.post('/api/analytics/track', async (req, res) => {
+  try {
+    const { pageId, event, data } = req.body;
+
+    const { error } = await supabase
+      .from('analytics')
+      .insert([
+        {
+          id: uuidv4(),
+          page_id: pageId,
+          event,
+          data: JSON.stringify(data),
+          ip_address: req.ip,
+          user_agent: req.get('User-Agent'),
+          created_at: new Date().toISOString()
+        }
+      ]);
+
+    if (error) {
+      console.error('Analytics error:', error);
+    }
+
+    res.json({ success: true });
+
+  } catch (error) {
+    console.error('Analytics error:', error);
+    res.status(500).json({ error: 'Failed to track analytics' });
+  }
+});
+
+// Helper functions
+function generateCustomUrl(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim('-') + '-' + Math.random().toString(36).substr(2, 6);
 }
 
-// Get all payments (for admin dashboard)
-app.get('/api/payments', (req, res) => {
-    const payments = Array.from(pendingPayments.entries()).map(([order_id, payment]) => ({
-        order_id,
-        ...payment
-    }));
+function generatePageHTML(page) {
+  const components = JSON.parse(page.components);
+  const settings = JSON.parse(page.settings);
+
+  const componentsHTML = components.map(component => {
+    // This would use the component library to render HTML
+    return `<div class="component" data-component-id="${component.id}">
+      <!-- Component HTML would be generated here -->
+      <h2>${component.content.title || 'Component'}</h2>
+    </div>`;
+  }).join('');
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${page.title}</title>
+    <meta name="description" content="${page.description}">
     
-    res.json({
-        status: 'success',
-        data: payments
-    });
+    <!-- Performance Optimized CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- TailwindCSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Analytics -->
+    <script>
+        // Track page view
+        fetch('/api/analytics/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                pageId: '${page.id}',
+                event: 'page_view',
+                data: { url: window.location.href }
+            })
+        });
+    </script>
+</head>
+<body class="font-sans">
+    ${componentsHTML}
+    
+    <!-- Performance Monitoring -->
+    <script>
+        window.addEventListener('load', function() {
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            console.log('Page load time:', loadTime + 'ms');
+        });
+    </script>
+</body>
+</html>`;
+}
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+  console.error('Unhandled error:', error);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.json({ status: 'healthy', timestamp: new Date() });
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
 
 // Start server
 app.listen(PORT, HOST, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Health check: http://localhost:${PORT}/health`);
-    if (process.env.NODE_ENV !== 'production') {
-        console.log(`Mobile access: http://192.168.100.14:${PORT}/health`);
-    }
+  console.log(`🚀 Landing Page Builder Server running on port ${PORT}`);
+  console.log(`📍 Health check: http://localhost:${PORT}/health`);
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`📱 Mobile access: http://192.168.100.14:${PORT}/health`);
+  }
+  console.log(`🌐 Base URL: ${process.env.BASE_URL || 'http://localhost:3000'}`);
 });
-
-module.exports = app;

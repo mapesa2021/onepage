@@ -1,60 +1,48 @@
 {
   "name": "landing-page-builder",
-  "version": "1.0.0",
-  "description": "Drag and drop landing page builder with payment integration",
+  "version": "2.0.0",
+  "description": "Full-stack landing page builder with user management and custom URLs",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
-    "server:dev": "nodemon server.js",
-    "client:dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "build": "npm run build:client",
+    "build:client": "vite build",
+    "install:client": "cd client && npm install",
+    "dev:client": "cd client && npm run dev",
+    "dev:full": "concurrently \"npm run dev\" \"npm run dev:client\""
   },
-  "keywords": [
-    "landing-page",
-    "drag-drop",
-    "builder",
-    "zenopay",
-    "payment",
-    "mobile-money",
-    "tanzania"
-  ],
-  "author": "Your Name",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
-    "axios": "^1.6.0",
     "dotenv": "^16.3.1",
-    "sqlite3": "^5.1.6",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "@supabase/supabase-js": "^2.38.0",
     "uuid": "^9.0.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.18.0",
-    "react-beautiful-dnd": "^13.1.1",
-    "framer-motion": "^10.16.4",
-    "zustand": "^4.4.6",
-    "lucide-react": "^0.292.0",
-    "clsx": "^2.0.0",
-    "tailwind-merge": "^2.0.0",
-    "react-hot-toast": "^2.4.1"
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.1.5",
+    "compression": "^1.7.4",
+    "morgan": "^1.10.0",
+    "axios": "^1.6.2",
+    "sharp": "^0.33.0",
+    "cloudinary": "^1.41.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@types/uuid": "^9.0.7",
-    "@types/react-beautiful-dnd": "^13.1.6",
-    "@vitejs/plugin-react": "^4.1.1",
-    "typescript": "^5.2.2",
-    "vite": "^4.5.0",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.5"
+    "nodemon": "^3.0.2",
+    "concurrently": "^8.2.2"
   },
   "engines": {
-    "node": ">=16.0.0"
-  }
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "landing-page",
+    "builder",
+    "drag-drop",
+    "supabase",
+    "full-stack"
+  ],
+  "author": "Landing Page Builder Team",
+  "license": "MIT"
 }
