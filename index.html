@@ -451,10 +451,10 @@
     <script>
         // Backend Configuration (to avoid CORS issues)
         const BACKEND_CONFIG = {
-            apiUrl: 'http://192.168.100.14:3000/api/payments', // Local development with IP for mobile access
+            apiUrl: 'https://onepage-production-0c26.up.railway.app/api/payments', // Production Railway backend
+            // apiUrl: 'http://192.168.100.14:3000/api/payments', // Local development with IP for mobile access
             // apiUrl: 'http://localhost:3000/api/payments', // Local development (desktop only)
-            // apiUrl: 'https://your-backend-domain.com/api/payments', // Production
-            webhookUrl: 'https://your-domain.com/payment-webhook'
+            webhookUrl: 'https://onepage-production-0c26.up.railway.app/api/payments/webhook'
         };
 
         // Generate unique order ID
