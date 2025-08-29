@@ -405,6 +405,13 @@
                         Nafasi 20 pekee tu!
                     </p>
                 </div>
+                
+                <!-- Test API Button (for debugging) -->
+                <div class="mt-4 text-center">
+                    <button onclick="testAPI()" class="text-xs text-blue-500 hover:text-blue-700 underline">
+                        Test API Connection
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -497,6 +504,8 @@
             showModal('processing');
 
             try {
+                console.log('Sending payment request:', paymentData);
+                
                 // Send payment request directly to ZenoPay API
                 const response = await fetch(ZENOPAY_CONFIG.apiUrl, {
                     method: 'POST',
@@ -507,11 +516,15 @@
                     body: JSON.stringify(paymentData)
                 });
 
-                const result = await response.json();
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
 
-                if (result.status === 'success') {
+                const result = await response.json();
+                console.log('Payment response:', result);
+
+                if (result.status === 'success' || result.resultcode === '000') {
                     // Payment initiated successfully
-                    console.log('Payment initiated:', result);
+                    console.log('Payment initiated successfully:', result);
                     
                     // Store order ID for status checking
                     localStorage.setItem('lastOrderId', paymentData.order_id);
@@ -520,11 +533,12 @@
                     pollPaymentStatus(paymentData.order_id);
                 } else {
                     // Payment failed
-                    showModal('error', result.message || 'Malipo hayajafanikiwa');
+                    console.error('Payment failed:', result);
+                    showModal('error', result.message || result.error || 'Malipo hayajafanikiwa');
                 }
             } catch (error) {
                 console.error('Payment error:', error);
-                showModal('error', 'Kuna tatizo la mtandao. Jaribu tena.');
+                showModal('error', 'Kuna tatizo la mtandao. Jaribu tena. Error: ' + error.message);
             }
         });
 
@@ -535,6 +549,7 @@
 
             const pollInterval = setInterval(async () => {
                 attempts++;
+                console.log(`Checking payment status (attempt ${attempts}/${maxAttempts}) for order: ${orderId}`);
                 
                 try {
                     // Check payment status through ZenoPay API
@@ -545,15 +560,27 @@
                     });
 
                     const result = await response.json();
+                    console.log('Status check response:', result);
 
-                    if (result.result === 'SUCCESS' && result.data && result.data[0].payment_status === 'COMPLETED') {
+                    // Check for completed payment
+                    if (result.result === 'SUCCESS' && result.data && result.data[0] && result.data[0].payment_status === 'COMPLETED') {
                         clearInterval(pollInterval);
+                        console.log('Payment completed successfully!');
                         showModal('success');
+                        return;
+                    }
+
+                    // Check for failed payment
+                    if (result.result === 'SUCCESS' && result.data && result.data[0] && result.data[0].payment_status === 'FAILED') {
+                        clearInterval(pollInterval);
+                        console.log('Payment failed');
+                        showModal('error', 'Malipo hayajafanikiwa. Jaribu tena.');
                         return;
                     }
 
                     if (attempts >= maxAttempts) {
                         clearInterval(pollInterval);
+                        console.log('Max attempts reached, payment timeout');
                         showModal('error', 'Malipo hayajakamilika. Jaribu tena.');
                     }
                 } catch (error) {
@@ -607,6 +634,38 @@
                 closeModal();
             }
         });
+
+        // Test API function
+        async function testAPI() {
+            try {
+                console.log('Testing API connection...');
+                const testData = {
+                    order_id: 'test_' + Date.now(),
+                    buyer_email: 'test@example.com',
+                    buyer_name: 'Test User',
+                    buyer_phone: '0712345678',
+                    amount: 1000
+                };
+                
+                const response = await fetch(ZENOPAY_CONFIG.apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': ZENOPAY_CONFIG.apiKey
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                console.log('Test response status:', response.status);
+                const result = await response.json();
+                console.log('Test API response:', result);
+                
+                alert('API Test Result: ' + JSON.stringify(result, null, 2));
+            } catch (error) {
+                console.error('API test error:', error);
+                alert('API Test Error: ' + error.message);
+            }
+        }
     </script>
 
 </body>
