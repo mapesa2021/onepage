@@ -1,23 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Landing Page Builder - Drag & Drop</title>
-    <meta name="description" content="Create beautiful landing pages with drag and drop interface. Fast, customizable, and optimized for performance." />
-    
-    <!-- Preload critical resources -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Performance optimizations -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wealth Creation with Digital Assets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-white text-gray-900 font-sans">
+    <section class="min-h-screen flex items-center justify-center px-4 py-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-8 leading-tight">
+                Ili kufanikiwa kifedha, unahitaji kufahamu utajiri una formula yake
+            </h1>
+            
+            <div class="space-y-8 text-left">
+                <div class="bg-red-600 text-white p-6 rounded-lg">
+                    <h2 class="text-xl md:text-2xl font-bold mb-4">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        Tatizo la Siku za Leo
+                    </h2>
+                    <p class="text-lg md:text-xl leading-relaxed">
+                        Na laiti kama waajiriwa wengi wangefundishwa formula hii mara baada tu ya kumaliza chuo, basi tungezalisha matajiri wengi sana.
+                    </p>
+                </div>
+
+                <div class="bg-yellow-400 text-gray-900 p-6 rounded-lg">
+                    <h2 class="text-xl md:text-2xl font-bold mb-4">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        Suluhisho Lako
+                    </h2>
+                    <p class="text-lg md:text-xl leading-relaxed">
+                        Jifunze formula ya utajiri kupitia digital assets na uweze kujenga mapato ya kila siku bila kuhitaji kufanya kazi ya saa 8.
+                    </p>
+                </div>
+
+                <div class="bg-green-600 text-white p-6 rounded-lg">
+                    <h2 class="text-xl md:text-2xl font-bold mb-4">
+                        <i class="fas fa-dollar-sign mr-2"></i>
+                        Fursa ya Mapato
+                    </h2>
+                    <p class="text-lg md:text-xl leading-relaxed">
+                        Digital assets zinaweza kukupa mapato ya Tsh 50,000 - 500,000 kwa siku ikiwa unajua formula sahihi.
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-12">
+                <button id="joinButton" 
+                        class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 md:py-6 px-8 md:px-12 text-xl md:text-2xl rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                    <i class="fas fa-rocket mr-2 md:mr-3"></i>
+                    Jiunge Sasa - Tsh 15,000
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div id="paymentPopup" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg p-6 md:p-8 max-w-md w-full mx-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900">Malipo ya Video</h2>
+                    <button onclick="closePaymentPopup()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="paymentForm" class="space-y-4">
+                    <div>
+                        <label for="buyer_phone" class="block text-sm font-medium text-gray-700 mb-2">Namba ya Simu</label>
+                        <input type="tel" id="buyer_phone" name="buyer_phone" required 
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="07XXXXXXXX">
+                    </div>
+                    
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <p class="text-sm text-gray-600 mb-2">Taarifa za Malipo:</p>
+                        <p class="font-semibold">Jina: John Doe</p>
+                        <p class="font-semibold">Email: john.doe@example.com</p>
+                        <p class="font-semibold">Kiasi: Tsh 15,000</p>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300">
+                        <i class="fas fa-credit-card mr-2"></i>
+                        Lipa Sasa - Tsh 15,000
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg p-6 md:p-8 max-w-md w-full mx-4 text-center">
+                <div id="loadingStatus">
+                    <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Inatumwa...</h3>
+                    <p class="text-gray-600">Tafadhali subiri, malipo yako yanatumwa</p>
+                </div>
+
+                <div id="successStatus" class="hidden">
+                    <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Malipo Yamefanikiwa!</h3>
+                    <p class="text-gray-600 mb-4">Bofya hapa chini kujiunga na WhatsApp na kupata video yako</p>
+                    <div class="space-y-3">
+                        <button onclick="redirectToWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg w-full font-semibold">
+                            <i class="fab fa-whatsapp mr-2"></i>
+                            Jiunge na WhatsApp
+                        </button>
+                        <button onclick="closeModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg w-full">
+                            Funga
+                        </button>
+                    </div>
+                </div>
+
+                <div id="errorStatus" class="hidden">
+                    <i class="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Kuna Tatizo</h3>
+                    <p id="errorMessage" class="text-gray-600 mb-4">Malipo hayajafanikiwa. Jaribu tena.</p>
+                    <button onclick="closeModal()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg w-full">
+                        Funga
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_CONFIG = {
+            apiUrl: 'https://onepage-production-0c26.up.railway.app/api/payments',
+            webhookUrl: 'https://onepage-production-0c26.up.railway.app/api/payments/webhook'
+        };
+
+        function generateOrderId() {
+            return 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function showLoading() {
+            document.getElementById('loadingStatus').classList.remove('hidden');
+            document.getElementById('successStatus').classList.add('hidden');
+            document.getElementById('errorStatus').classList.add('hidden');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingStatus').classList.add('hidden');
+        }
+
+        function showModal() {
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+
+        function showPaymentPopup() {
+            document.getElementById('paymentPopup').classList.remove('hidden');
+        }
+
+        function closePaymentPopup() {
+            document.getElementById('paymentPopup').classList.add('hidden');
+        }
+
+        function redirectToWhatsApp() {
+            const phoneNumber = '255754546567';
+            const message = encodeURIComponent('Habari! Nimefanikiwa kulipa Tsh 15,000 kwa video ya "Wealth Creation with Digital Assets". Tafadhali nitumie video hiyo.');
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+            window.open(whatsappUrl, '_blank');
+            closeModal();
+        }
+
+        function validatePhone(phone) {
+            const phoneRegex = /^07\d{8}$/;
+            return phoneRegex.test(phone);
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const phone = document.getElementById('buyer_phone').value.trim();
+            
+            if (!validatePhone(phone)) {
+                alert('Tafadhali weka namba sahihi ya simu (mwanzo na 07)');
+                return;
+            }
+
+            const orderId = generateOrderId();
+            const paymentData = {
+                order_id: orderId,
+                buyer_name: "John Doe",
+                buyer_email: "john.doe@example.com",
+                buyer_phone: phone,
+                amount: 15000,
+                webhook_url: BACKEND_CONFIG.webhookUrl
+            };
+
+            showPaymentPopup();
+            showModal();
+            showLoading();
+
+            try {
+                const response = await fetch(BACKEND_CONFIG.apiUrl + '/initiate-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(paymentData)
+                });
+
+                const result = await response.json();
+                hideLoading();
+
+                if (result.status === 'success') {
+                    await checkPaymentStatus(orderId);
+                } else {
+                    document.getElementById('errorMessage').textContent = result.message || 'Malipo hayajafanikiwa';
+                    document.getElementById('errorStatus').classList.remove('hidden');
+                }
+
+            } catch (error) {
+                hideLoading();
+                document.getElementById('errorMessage').textContent = 'Kuna tatizo la mtandao. Jaribu tena.';
+                document.getElementById('errorStatus').classList.remove('hidden');
+            }
+        });
+
+        async function checkPaymentStatus(orderId) {
+            try {
+                const response = await fetch(`${BACKEND_CONFIG.apiUrl}/payment-status?order_id=${orderId}`);
+                const result = await response.json();
+                
+                if (result.payment_status === 'COMPLETED') {
+                    document.getElementById('successStatus').classList.remove('hidden');
+                } else {
+                    document.getElementById('errorMessage').textContent = 'Malipo hayajakamilika. Jaribu tena.';
+                    document.getElementById('errorStatus').classList.remove('hidden');
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = 'Haiwezekani kuangalia hali ya malipo.';
+                document.getElementById('errorStatus').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('joinButton').addEventListener('click', showPaymentPopup);
+
+        document.getElementById('paymentPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentPopup();
+            }
+        });
+
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
 </html>
