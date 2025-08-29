@@ -52,7 +52,32 @@ app.post('/api/payments/initiate-payment', async (req, res) => {
             webhook_url: process.env.WEBHOOK_URL || webhook_url
         };
 
-        // Call ZenoPay API
+        // Check if this is a test payment for your phone number
+        if (buyer_phone === '0750278741') {
+            console.log('Test payment detected for phone: 0750278741');
+            
+            // Simulate successful payment for test user
+            const testResult = {
+                status: 'success',
+                message: 'Test payment successful',
+                order_id: order_id
+            };
+
+            // Store payment info for status checking
+            pendingPayments.set(order_id, {
+                buyer_name,
+                buyer_email,
+                buyer_phone,
+                amount,
+                status: 'COMPLETED', // Mark as completed for test
+                created_at: new Date(),
+                is_test: true
+            });
+
+            return res.json(testResult);
+        }
+
+        // Call ZenoPay API for real payments
         const zenoPayResponse = await axios.post(ZENOPAY_CONFIG.apiUrl, paymentData, {
             headers: {
                 'Content-Type': 'application/json',
@@ -105,6 +130,18 @@ app.get('/api/payments/payment-status', async (req, res) => {
                 status: 'error',
                 message: 'Order ID is required'
             });
+        }
+
+        // Check if this is a test payment
+        if (pendingPayments.has(order_id)) {
+            const localPayment = pendingPayments.get(order_id);
+            if (localPayment.is_test && localPayment.status === 'COMPLETED') {
+                return res.json({
+                    status: 'success',
+                    payment_status: 'COMPLETED',
+                    message: 'Test payment completed successfully'
+                });
+            }
         }
 
         // Check ZenoPay for payment status
