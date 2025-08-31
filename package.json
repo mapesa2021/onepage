@@ -1,7 +1,7 @@
 {
   "name": "zenopay-backend",
   "version": "1.0.0",
-  "description": "Backend server for ZenoPay payment integration",
+  "description": "Backend server for ZenoPay payment integration with Clubzila authentication",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -12,7 +12,9 @@
     "zenopay",
     "payment",
     "mobile-money",
-    "tanzania"
+    "tanzania",
+    "clubzila",
+    "authentication"
   ],
   "author": "Your Name",
   "license": "MIT",
