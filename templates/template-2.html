@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Transformation - Template 2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .cta-bg {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .testimonial-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+        }
+        .floating-card {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <!-- Authentication Check -->
+    <div id="authCheck" class="hidden">
+        <div class="min-h-screen flex items-center justify-center bg-gray-50">
+            <div class="max-w-md w-full space-y-8">
+                <div class="text-center">
+                    <div class="mx-auto h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-lock text-3xl text-red-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+                    <p class="text-gray-600 mb-6">Please log in to access this template.</p>
+                    <div class="space-y-4">
+                        <a href="/auth/login" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-block">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Login
+                        </a>
+                        <a href="/auth/register" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors inline-block">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Register
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+    
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-24">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="mb-6">
+                        <span class="bg-white bg-opacity-20 px-4 py-2 rounded-full text-sm font-semibold">
+                            <i class="fas fa-fire mr-2"></i>
+                            Transform Your Life
+                        </span>
+                    </div>
+                    
+                    <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                        Transform Your Body, Transform Your Life
+                    </h1>
+                    
+                    <p class="text-xl text-gray-200 mb-8 leading-relaxed">
+                        Join thousands who have achieved their fitness goals with our proven 12-week transformation program
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="cta-bg text-white px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity">
+                            <i class="fas fa-play mr-2"></i>
+                            Start Free Trial
+                        </button>
+                        <button class="bg-white text-gray-800 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-video mr-2"></i>
+                            Watch Demo
+                        </button>
+                    </div>
+                    
+                    <div class="mt-8 flex items-center space-x-6 text-sm">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                            <span>Free 7-day trial</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                            <span>No credit card required</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="floating-card bg-white bg-opacity-10 p-8 rounded-2xl backdrop-blur-sm">
+                        <i class="fas fa-dumbbell text-8xl text-yellow-300 mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-4">12-Week Program</h3>
+                        <p class="text-gray-200">Complete transformation system</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="grid md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-4xl font-bold text-blue-600 mb-2">50,000+</div>
+                    <p class="text-gray-600">Active Members</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-green-600 mb-2">95%</div>
+                    <p class="text-gray-600">Success Rate</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-purple-600 mb-2">12</div>
+                    <p class="text-gray-600">Week Program</p>
+                </div>
+                <div>
+                    <div class="text-4xl font-bold text-red-600 mb-2">24/7</div>
+                    <p class="text-gray-600">Support Available</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Struggling with Fitness Goals?
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Most people fail because they lack proper guidance, accountability, and a proven system
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card bg-red-50 p-8 rounded-xl border-l-4 border-red-500">
+                    <div class="text-red-500 text-4xl mb-4">
+                        <i class="fas fa-times-circle"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">No Clear Plan</h3>
+                    <p class="text-gray-600">Random workouts without a structured program lead to inconsistent results</p>
+                </div>
+                
+                <div class="feature-card bg-red-50 p-8 rounded-xl border-l-4 border-red-500">
+                    <div class="text-red-500 text-4xl mb-4">
+                        <i class="fas fa-user-times"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Lack of Accountability</h3>
+                    <p class="text-gray-600">No one to keep you motivated and on track with your fitness journey</p>
+                </div>
+                
+                <div class="feature-card bg-red-50 p-8 rounded-xl border-l-4 border-red-500">
+                    <div class="text-red-500 text-4xl mb-4">
+                        <i class="fas fa-chart-line-down"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900">Plateau & Frustration</h3>
+                    <p class="text-gray-600">Hitting walls and not seeing progress leads to giving up</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Our Proven Solution
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    A comprehensive 12-week transformation program designed for real results
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="space-y-8">
+                        <div class="flex items-start">
+                            <div class="bg-green-500 rounded-full p-3 mr-6">
+                                <i class="fas fa-check text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold mb-3 text-gray-900">Personalized Workout Plans</h3>
+                                <p class="text-gray-600">Customized programs based on your fitness level, goals, and available equipment</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-green-500 rounded-full p-3 mr-6">
+                                <i class="fas fa-check text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold mb-3 text-gray-900">Nutrition Guidance</h3>
+                                <p class="text-gray-600">Complete meal plans and nutrition education to fuel your transformation</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-green-500 rounded-full p-3 mr-6">
+                                <i class="fas fa-check text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold mb-3 text-gray-900">24/7 Community Support</h3>
+                                <p class="text-gray-600">Connect with like-minded individuals and certified trainers for motivation</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="bg-green-500 rounded-full p-3 mr-6">
+                                <i class="fas fa-check text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold mb-3 text-gray-900">Progress Tracking</h3>
+                                <p class="text-gray-600">Monitor your progress with detailed analytics and milestone celebrations</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-white p-8 rounded-2xl shadow-xl">
+                        <div class="mb-6">
+                            <i class="fas fa-mobile-alt text-6xl text-blue-600"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">What You Get</h3>
+                        <ul class="text-left space-y-4 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                12-week progressive workout program
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Personalized nutrition plans
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Video demonstrations for all exercises
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Progress tracking dashboard
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Community forum access
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Weekly check-ins with coaches
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Real Results from Real People
+                </h2>
+                <p class="text-xl text-gray-600">See the transformations our members have achieved</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card p-8 rounded-xl">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                            J
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Jennifer Smith</h4>
+                            <p class="text-sm text-gray-600">Lost 45 lbs in 12 weeks</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"This program completely changed my life. I went from being overweight and unhappy to feeling confident and strong. The community support was incredible!"</p>
+                    <div class="flex justify-between items-center">
+                        <div class="text-yellow-500">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-sm text-gray-500">Verified Member</span>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card p-8 rounded-xl">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                            M
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Mike Johnson</h4>
+                            <p class="text-sm text-gray-600">Gained 20 lbs muscle</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"As a busy professional, I needed a program that fit my schedule. This delivered amazing results with just 45 minutes, 4 times per week!"</p>
+                    <div class="flex justify-between items-center">
+                        <div class="text-yellow-500">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-sm text-gray-500">Verified Member</span>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card p-8 rounded-xl">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white font-bold text-xl mr-4">
+                            S
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-lg">Sarah Wilson</h4>
+                            <p class="text-sm text-gray-600">Improved energy & mood</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"Not only did I lose weight, but my energy levels skyrocketed and my mood improved dramatically. The nutrition guidance was a game-changer!"</p>
+                    <div class="flex justify-between items-center">
+                        <div class="text-yellow-500">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="text-sm text-gray-500">Verified Member</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-gray-900 text-white">
+        <div class="container mx-auto px-4 max-w-4xl text-center">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-12 rounded-2xl">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Ready to Transform Your Life?
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Join thousands of successful members who have achieved their fitness goals
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
+                    <button class="cta-bg text-white px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity pulse-animation">
+                        <i class="fas fa-rocket mr-2"></i>
+                        Start Free Trial
+                    </button>
+                    <div class="text-sm opacity-75">
+                        <i class="fas fa-clock mr-1"></i>
+                        Limited Time - 50% Off
+                    </div>
+                </div>
+                
+                <div class="flex justify-center space-x-8 text-sm opacity-75">
+                    <div class="flex items-center">
+                        <i class="fas fa-shield-alt mr-2"></i>
+                        30-Day Money Back
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-credit-card mr-2"></i>
+                        No Credit Card Required
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-users mr-2"></i>
+                        24/7 Support
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Fitness Transformation</h3>
+                    <p class="text-gray-400">Transform your body and life with our proven fitness programs</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Programs</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">12-Week Transformation</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Beginner Program</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Advanced Training</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Nutrition Plans</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Community Forum</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Coaches</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-youtube text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-tiktok text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Fitness Transformation. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    </div> <!-- End of mainContent -->
+
+    <script>
+        // Authentication check
+        function checkAuthentication() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!user.isAuthenticated || !user.userId || !user.authId) {
+                document.getElementById('authCheck').classList.remove('hidden');
+                document.getElementById('mainContent').classList.add('hidden');
+                return false;
+            }
+            
+            // Check if session is not expired (24 hours)
+            const sessionAge = Date.now() - user.timestamp;
+            const maxSessionAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            
+            if (sessionAge > maxSessionAge) {
+                localStorage.removeItem('user');
+                document.getElementById('authCheck').classList.remove('hidden');
+                document.getElementById('mainContent').classList.add('hidden');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuthentication()) {
+                return;
+            }
+            
+            // Simple interaction for demo purposes
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('This is a template demo. In production, this would trigger your payment/registration flow.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

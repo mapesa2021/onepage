@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wealth Creation with Digital Assets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .section-padding {
+            padding: 40px 0;
+        }
+        @media (min-width: 768px) {
+            .section-padding {
+                padding: 80px 0;
+            }
+        }
+        .container-max {
+            max-width: 1200px;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+        }
+        .urgency-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .testimonial-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+        }
+        .money-highlight {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        .problem-highlight {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-left: 4px solid #ef4444;
+        }
+        .payment-form {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .loading {
+            display: none;
+        }
+        .loading.show {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white section-padding">
+        <div class="container-max mx-auto px-4 md:px-6">
+            <div class="text-center max-w-4xl mx-auto">
+                <!-- Hero Icon -->
+                <div class="mb-6 md:mb-8">
+                    <i class="fas fa-chart-line text-4xl md:text-6xl text-yellow-300"></i>
+                </div>
+                
+                <!-- Main Headline -->
+                <h1 class="text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight mb-4 md:mb-6 px-2">
+                    Ili kufanikiwa kifedha , unahitaji kufahamu utajiri una formular yake…na laiti kama waajiriwa wengi wangefundishwa formula hii mara baada tu ya kumaliza chuo , basi tungezalisha matajiri wengi sana ..
+                </h1>
+                
+                <!-- Subheadline -->
+                <p class="text-lg md:text-xl lg:text-2xl text-gray-200 mb-6 md:mb-8 leading-relaxed px-2">
+                    Jifunze formula ya kujijengea kipato cha milioni 10 kwa mwezi kupitia digital products
+                </p>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="bg-gray-50 section-padding">
+        <div class="container-max mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8 md:mb-12">
+                    <i class="fas fa-exclamation-triangle text-3xl md:text-4xl text-red-500 mb-3 md:mb-4"></i>
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Mtego wa Umaskini</h2>
+                    <p class="text-lg md:text-xl text-gray-600">Kuna tatizo kubwa katika njia ya kufikiria kipato</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+                    <div class="space-y-4 md:space-y-6 text-base md:text-lg">
+                        <div class="problem-highlight p-4 md:p-6 rounded-lg">
+                            <p class="text-lg md:text-xl font-semibold text-gray-800">
+                                hatua ya kwanza ni kutengeneza njia ya kuingiza pesa ambayo haitegemeani na muda wako..
+                            </p>
+                        </div>
+                        
+                        <p class="text-gray-700">
+                            mtego wa umaskini , upo kwenye muda wako.
+                        </p>
+                        
+                        <p class="text-gray-700">
+                            ni muhimu kutenganisha  muda wako na chanzo chako cha mapato kwasababu , muda hautokaa uongezeke..kika mtu ana masaa 24 yale yale katika siku…na hivyo kama utalipwa kutokana na muda wako (kuajiriwa )…basi ni vigumu kipato chako kuongezeka..
+                        </p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <img src="https://images.unsplash.com/photo-1506784365847-bbad939e9335?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                             alt="Time Management Problem" 
+                             class="rounded-lg shadow-lg w-full">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="bg-white section-padding">
+        <div class="container-max mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8 md:mb-12">
+                    <i class="fas fa-lightbulb text-3xl md:text-4xl text-blue-500 mb-3 md:mb-4"></i>
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Suluhisho: Digital Products</h2>
+                    <p class="text-lg md:text-xl text-gray-600">Tengeneza mara moja, uuze mara nyingi</p>
+                </div>
+                
+                <div class="space-y-6 md:space-y-8 text-base md:text-lg">
+                    <div class="highlight-box p-4 md:p-6 rounded-lg">
+                        <p class="text-gray-700">
+                            so ili kufanya hivi…utahitaji kua na bidhaa ya kuuza.. na bidhaa hii inabidi kua ya tofauti kidogo..inahitajia kua bidhaa ambayo utatengeneza mara moja….lakini utauza mara nyingi utakavyo ,bila ya kutengeneza tena na tena kila unapouza..
+                        </p>
+                    </div>
+                    
+                    <p class="text-gray-700">
+                        kwahyo utawekeza muda wako mara ya kwanza tu unapotengeneza bidhaa hii , kisha utaweza kuiuza mara nyingi utakavyo.. mfano rahisi wa bidhaa hii ni " e books " au "video " au bidhaa yoyote ile ambayo iko katika mfumo wa kielectroniki (digital products)
+                    </p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Kariakoo Example Section -->
+    <section class="bg-gray-50 section-padding">
+        <div class="container-max mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8 md:mb-12">
+                    <i class="fas fa-store text-3xl md:text-4xl text-green-500 mb-3 md:mb-4"></i>
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Mfano wa Vitendo: Kariakoo</h2>
+                    <p class="text-lg md:text-xl text-gray-600">Jinsi ya kutumia formula hii kwa vitendo</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+                    <div class="text-center">
+                        <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                             alt="Kariakoo Market" 
+                             class="rounded-lg shadow-lg w-full">
+                    </div>
+                    
+                    <div class="space-y-4 md:space-y-6 text-base md:text-lg">
+                        <p class="text-gray-700">
+                            chukulia mfano ,machimbo ya kariakoo, unaweza kuandaaa kitabu kidogo chenye kuelekeza machimbo yote ya kariako , na namba za simu za wauzaji wa bei za jumla jumla ,....na kitabu hiki ukawauzia wafanya biashara kama muongizo wa kuwasaidia pindi wanapotaka kununua mzigo mpya..
+                        </p>
+                        
+                        <div class="highlight-box p-4 md:p-6 rounded-lg">
+                            <p class="text-gray-700 font-semibold">
+                                kumbuka kitabu hiki ni ni digital formart ,kwahiyo hatuna gharama za kuprint wala kusambaza
+                            </p>
+                        </div>
+                        
+                        <p class="text-gray-700">
+                            Mfano wa Kariakoo ulikuwa wa kukufungua macho ili upate kunielewa. Sasa hebu tuende hatua ya pili—tuangalie namna ya kutumia formula hii kutengeneza kipato cha milioni 10 kwa mwezi.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 10M Goal Section -->
+    <section class="bg-white section-padding">
+        <div class="container-max mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8 md:mb-12">
+                    <i class="fas fa-target text-3xl md:text-4xl text-purple-500 mb-3 md:mb-4"></i>
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Lengo: Milioni 10 Kwa Mwezi</h2>
+                    <p class="text-lg md:text-xl text-gray-600">Formula ya kufikia kipato cha maisha standard</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-center mb-6 md:mb-8">
+                    <div class="space-y-4 md:space-y-6 text-base md:text-lg">
+                        <p class="text-gray-700">
+                            nasema million kumi kwasababu , kwa maisha ya kitanzania millioni kumi kwa mwezi ni pesa ambayo inakuwezesha kuishi maisha standard kabisa..
+                        </p>
+                        
+                        <p class="text-gray-700">
+                            sasa ili kufikia lengo letu la 10m/month utahitajia vitu viwili , cha kwanza ni kutengeza kitabu kidogo katika mtindo wa pdf / ebook kama ambavyo nimekueleza hapo juu….tuseme kitabu hiki utakiuza kwa elfu kumi tu  ( Tsh 10,000 )…bei ambayo ni rahisi kwa mfanya biashara yoyote kulipia..
+                        </p>
+                        
+                        <div class="money-highlight p-4 md:p-6 rounded-lg">
+                            <p class="font-semibold">
+                                Na kumbuka  "karibia asilimia 100% ya pesa unayopokea , kwako ni faida " , sababu bidhaa yetu ipo katika "digital fomart " ,kwahiyo hauna gharama za uzalishaji , wala hauna gharama za delivery kama ilivyo kwa biashara za kawaida…hapa gharama pekee utakayoingia ni kulipia "INTERNET" yako
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                             alt="Financial Success" 
+                             class="rounded-lg shadow-lg w-full">
+                    </div>
+                </div>
+                
+                <!-- Math Breakdown -->
+                <div class="bg-blue-50 rounded-lg p-6 md:p-8 text-center mb-6 md:mb-8 border-2 border-blue-200">
+                    <h3 class="text-xl md:text-2xl font-bold text-blue-900 mb-3 md:mb-4">Hesabu Rahisi</h3>
+                    <div class="text-lg md:text-xl text-blue-800">
+                        <p class="mb-2">Bei: Tsh 10,000 kwa kitabu</p>
+                        <p class="mb-2">Idadi: Copy 1,000</p>
+                        <p class="text-2xl md:text-3xl font-bold text-blue-900">= Tsh 10,000,000 kwa mwezi</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategy Section -->
+    <section class="bg-gray-50 section-padding">
+        <div class="container-max mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8 md:mb-12">
+                    <i class="fas fa-cogs text-3xl md:text-4xl text-orange-500 mb-3 md:mb-4"></i>
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">ADAM'S STRATEGY</h2>
+                    <p class="text-lg md:text-xl text-gray-600">AUTOMATED DIGITAL ASSETS MONETIZATION STRATEGY</p>
+                </div>
+                
+                <div class="space-y-4 md:space-y-6 text-base md:text-lg">
+                    <p class="text-gray-700">
+                        sasa hapa najua kuna watu wataanza kusema ooh..haiwezekan kuuza copy 1000  nk..
+                    </p>
+                    
+                    <div class="highlight-box p-4 md:p-6 rounded-lg">
+                        <p class="text-gray-700 font-semibold">
+                            ndugu yang..wakati wewe unaona haiwezekani…wenzako wanauza hadi copy elf 3 kwa mwezi
+                        </p>
+                    </div>
+                    
+                    <p class="text-gray-700">
+                        na uzuri ni kwamba nitaenda kukuonyesha kwa vitendo , jinsi utakavyoenda kuuza bidhaa hii bila ya kua na followers wengi mtandaoni au kua maarufu kupitia mbinu yangu ya "ADAM'S STRATERGY" (AUTOMATED DIGITAL ASSETS MONETIZATION STRATERGY"
+                    </p>
+                    
+                    <p class="text-gray-700">
+                        Hivyo kuhusu suala la kupata wateja mtandaoni , nikutoe shaka…
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Stories Section -->
+    <section class="bg-white section-padding">
+        <div class="container-max mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8 md:mb-12">
+                    <i class="fas fa-trophy text-3xl md:text-4xl text-yellow-500 mb-3 md:mb-4"></i>
+                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4">Mafanikio ya Wanafunzi</h2>
+                    <p class="text-lg md:text-xl text-gray-600">46 kati ya 47 wanafunzi wamefanikiwa!</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+                    <div class="space-y-4 md:space-y-6 text-base md:text-lg">
+                        <div class="testimonial-card p-4 md:p-6 rounded-lg">
+                            <p class="text-gray-700">
+                                Mwezi uliopita tuliendesha mafunzo ya biashara  hii , na kilichonishangaza zaidi ni kwamba , kati ya wanafunzi 47 waliohudhuria mafunzo yale, ukimtoa Richard ambae hakufanikiwa kumaliza mafunzo (alipata msiba ) , wanafunzi wengine 46 wote wamefanikiwa kuanzisha biashara hii , na muda huu hawakauki DM kunitumia message za shukrani.
+                            </p>
+                        </div>
+                        
+                        <p class="text-gray-700">
+                            Uzuri ni kwamba mafunzo yale niliyowafundisha kina Richard niliyarecord  , na leo hii nataka kukupa offa ya kukutumia video hii ili na wewe ukajifunze na kuanza kuingiza pesa kupitia biashara hii ya "DIGITAL PRODUCTS"..
+                        </p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                             alt="Successful Students" 
+                             class="rounded-lg shadow-lg w-full">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Form Section -->
+    <section class="gradient-bg text-white section-padding">
+        <div class="container-max mx-auto px-4 md:px-6">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="mb-6 md:mb-8">
+                    <i class="fas fa-gift text-4xl md:text-6xl text-yellow-300 mb-4 md:mb-6"></i>
+                    <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">Offa Maalum</h2>
+                    <p class="text-xl md:text-2xl text-gray-200 mb-6 md:mb-8">
+                        Nafasi 20 pekee kwa bei ya Tsh 15,000 tu
+                    </p>
+                </div>
+                
+                <!-- Urgency Badge -->
+                <div class="urgency-badge inline-block px-4 py-2 rounded-full text-white font-bold mb-6">
+                    <i class="fas fa-clock mr-2"></i>
+                    Nafasi 20 pekee tu!
+                </div>
+                
+                <div class="bg-white bg-opacity-10 rounded-lg p-6 md:p-8 mb-6 md:mb-8 border border-white border-opacity-20">
+                    <div class="space-y-3 md:space-y-4 text-base md:text-lg">
+                        <p>
+                            Mwezi huu nimeamua kutoa offa maalum. Badala ya kulipia Tsh 45,000 kama wanafunzi wangu wa awali, nitatoa nafasi 20 pekee kwa bei ya 15,000 Tsh tu.
+                        </p>
+                        
+                        <div class="highlight-box p-4 md:p-6 rounded-lg">
+                            <p class="font-semibold text-gray-800">
+                                👉 Ukijiunga sasa, utapata video kamili ya mafunzo yenye mbinu 7 nilizotumia kufundisha wanafunzi 47 — ambapo 46 kati yao tayari wanaingiza kipato kupitia digital products.
+                            </p>
+                        </div>
+                        
+                        <p class="text-yellow-300 font-bold text-lg">
+                            ⚠️ Kumbuka: Mara tu nafasi 20 zikijaa AU muda wa offa kuisha, bei inarudi 45,000 Tsh.
+                        </p>
+                        
+                        <p class="text-xl font-semibold">
+                            🚀 Jaza fomu hapa chini na ulipe kupitia Mobile Money:
+                        </p>
+                    </div>
+                </div>
+
+                <!-- CTA Button -->
+                <button id="joinButton" 
+                        class="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 md:py-6 px-8 md:px-12 text-xl md:text-2xl rounded-lg transition-all duration-300 transform hover:scale-105 shadow-2xl">
+                    <i class="fas fa-rocket mr-2 md:mr-3"></i>
+                    Jiunge Sasa - Tsh 15,000
+                </button>
+                
+                <p class="text-gray-300 mt-3 md:mt-4 text-sm">
+                    Nafasi 20 pekee • Bei inarudi 45,000 Tsh mara tu nafasi zikijaa
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Popup Modal -->
+    <div id="paymentPopup" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg p-6 md:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
+                <!-- Close Button -->
+                <div class="flex justify-end mb-4">
+                    <button onclick="closePaymentPopup()" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Popup Header -->
+                <div class="text-center mb-6">
+                    <i class="fas fa-gift text-4xl text-yellow-500 mb-4"></i>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Offa Maalum</h2>
+                    <p class="text-lg text-gray-600">Jaza fomu na ulipe kupitia Mobile Money</p>
+                </div>
+
+                <!-- Payment Form -->
+                <form id="paymentForm" class="space-y-4">
+                    <div>
+                        <label for="buyer_phone" class="block text-sm font-medium text-gray-700 mb-2">Namba ya Simu</label>
+                        <input type="tel" id="buyer_phone" name="buyer_phone" required 
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="07XXXXXXXX">
+                    </div>
+                    
+                    <div class="bg-yellow-100 border border-yellow-300 text-yellow-800 p-4 rounded-lg">
+                        <p class="font-bold text-lg">Bei: Tsh 15,000</p>
+                        <p class="text-sm">Lipia kupitia M-Pesa, Airtel Money, au Tigo Pesa</p>
+                    </div>
+                    
+                    <button type="submit" id="payButton" 
+                            class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 px-8 text-xl rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                        <span id="buttonText">
+                            <i class="fas fa-mobile-alt mr-2"></i>
+                            Lipia Sasa - Tsh 15,000
+                        </span>
+                        <span id="loadingText" class="loading">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>
+                            Inatumwa...
+                        </span>
+                    </button>
+                </form>
+                
+                <!-- Urgency Message -->
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-600">
+                        <i class="fas fa-clock text-red-500 mr-1"></i>
+                        Nafasi 20 pekee tu!
+                    </p>
+                </div>
+                
+                <!-- Test API Button (for debugging) -->
+                <div class="mt-4 text-center">
+                    <button onclick="testAPI()" class="text-xs text-blue-500 hover:text-blue-700 underline">
+                        Test API Connection
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Status Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg p-6 md:p-8 max-w-md w-full">
+                <div id="paymentStatus" class="text-center">
+                    <div id="processingStatus">
+                        <i class="fas fa-spinner fa-spin text-4xl text-blue-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Inatumwa...</h3>
+                        <p class="text-gray-600">Tafadhali subiri, tunatumia malipo yako</p>
+                    </div>
+                    
+                    <div id="successStatus" class="hidden">
+                        <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Malipo Yamefanikiwa!</h3>
+                        <p class="text-gray-600 mb-4">Video yako itatumwa kwenye barua pepe yako</p>
+                        <button onclick="closeModal()" class="bg-green-500 text-white px-6 py-2 rounded-lg">Sawa</button>
+                    </div>
+                    
+                    <div id="errorStatus" class="hidden">
+                        <i class="fas fa-times-circle text-4xl text-red-500 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Kuna Tatizo</h3>
+                        <p id="errorMessage" class="text-gray-600 mb-4">Malipo hayajafanikiwa</p>
+                        <button onclick="closeModal()" class="bg-red-500 text-white px-6 py-2 rounded-lg">Jaribu Tena</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backend Configuration (to avoid CORS issues)
+        const BACKEND_CONFIG = {
+            apiUrl: 'http://localhost:3000/api/payments', // Local development
+            // apiUrl: 'https://your-backend-domain.com/api/payments', // Production
+            webhookUrl: 'https://your-domain.com/payment-webhook'
+        };
+
+        // Generate unique order ID
+        function generateOrderId() {
+            return 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Show payment popup
+        function showPaymentPopup() {
+            document.getElementById('paymentPopup').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Close payment popup
+        function closePaymentPopup() {
+            document.getElementById('paymentPopup').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Restore scrolling
+        }
+
+        // Handle join button click
+        document.getElementById('joinButton').addEventListener('click', function() {
+            showPaymentPopup();
+        });
+
+        // Close popup when clicking outside
+        document.getElementById('paymentPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentPopup();
+            }
+        });
+
+        // Handle form submission
+        document.getElementById('paymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const paymentData = {
+                order_id: generateOrderId(),
+                buyer_name: "John Doe", // Hardcoded name
+                buyer_email: "john.doe@example.com", // Hardcoded email
+                buyer_phone: formData.get('buyer_phone'),
+                amount: 15000
+            };
+
+            // Show loading state
+            showLoading();
+            closePaymentPopup(); // Close payment popup
+            showModal('processing');
+
+            try {
+                console.log('Sending payment request:', paymentData);
+                
+                // Send payment request to backend server
+                const response = await fetch(BACKEND_CONFIG.apiUrl + '/initiate-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...paymentData,
+                        webhook_url: BACKEND_CONFIG.webhookUrl
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+
+                const result = await response.json();
+                console.log('Payment response:', result);
+
+                if (result.status === 'success') {
+                    // Payment initiated successfully
+                    console.log('Payment initiated successfully:', result);
+                    
+                    // Store order ID for status checking
+                    localStorage.setItem('lastOrderId', paymentData.order_id);
+                    
+                    // Start polling for payment status
+                    pollPaymentStatus(paymentData.order_id);
+                } else {
+                    // Payment failed
+                    console.error('Payment failed:', result);
+                    showModal('error', result.message || result.error || 'Malipo hayajafanikiwa');
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                showModal('error', 'Kuna tatizo la mtandao. Jaribu tena. Error: ' + error.message);
+            }
+        });
+
+        // Poll payment status
+        async function pollPaymentStatus(orderId) {
+            const maxAttempts = 30; // 5 minutes (10 second intervals)
+            let attempts = 0;
+
+            const pollInterval = setInterval(async () => {
+                attempts++;
+                console.log(`Checking payment status (attempt ${attempts}/${maxAttempts}) for order: ${orderId}`);
+                
+                try {
+                    // Check payment status through backend
+                    const response = await fetch(`${BACKEND_CONFIG.apiUrl}/payment-status?order_id=${orderId}`);
+
+                    const result = await response.json();
+                    console.log('Status check response:', result);
+
+                    // Check for completed payment
+                    if (result.status === 'success' && result.payment_status === 'COMPLETED') {
+                        clearInterval(pollInterval);
+                        console.log('Payment completed successfully!');
+                        showModal('success');
+                        return;
+                    }
+
+                    // Check for failed payment
+                    if (result.status === 'success' && result.payment_status === 'FAILED') {
+                        clearInterval(pollInterval);
+                        console.log('Payment failed');
+                        showModal('error', 'Malipo hayajafanikiwa. Jaribu tena.');
+                        return;
+                    }
+
+                    if (attempts >= maxAttempts) {
+                        clearInterval(pollInterval);
+                        console.log('Max attempts reached, payment timeout');
+                        showModal('error', 'Malipo hayajakamilika. Jaribu tena.');
+                    }
+                } catch (error) {
+                    console.error('Status check error:', error);
+                }
+            }, 10000); // Check every 10 seconds
+        }
+
+        // Show loading state
+        function showLoading() {
+            document.getElementById('buttonText').classList.add('loading');
+            document.getElementById('loadingText').classList.add('show');
+            document.getElementById('payButton').disabled = true;
+        }
+
+        // Hide loading state
+        function hideLoading() {
+            document.getElementById('buttonText').classList.remove('loading');
+            document.getElementById('loadingText').classList.remove('show');
+            document.getElementById('payButton').disabled = false;
+        }
+
+        // Show modal
+        function showModal(status) {
+            document.getElementById('paymentModal').classList.remove('hidden');
+            document.getElementById('processingStatus').classList.add('hidden');
+            document.getElementById('successStatus').classList.add('hidden');
+            document.getElementById('errorStatus').classList.add('hidden');
+            
+            document.getElementById(`${status}Status`).classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+            hideLoading();
+        }
+
+        // Phone number validation
+        document.getElementById('buyer_phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0 && !value.startsWith('07')) {
+                value = '07' + value.substring(2);
+            }
+            e.target.value = value;
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Test API function
+        async function testAPI() {
+            try {
+                console.log('Testing backend connection...');
+                const testData = {
+                    order_id: 'test_' + Date.now(),
+                    buyer_email: 'test@example.com',
+                    buyer_name: 'Test User',
+                    buyer_phone: '0712345678',
+                    amount: 1000
+                };
+                
+                const response = await fetch(BACKEND_CONFIG.apiUrl + '/initiate-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        ...testData,
+                        webhook_url: BACKEND_CONFIG.webhookUrl
+                    })
+                });
+                
+                console.log('Test response status:', response.status);
+                const result = await response.json();
+                console.log('Test API response:', result);
+                
+                alert('Backend Test Result: ' + JSON.stringify(result, null, 2));
+            } catch (error) {
+                console.error('Backend test error:', error);
+                alert('Backend Test Error: ' + error.message);
+            }
+        }
+    </script>
+
+</body>
+</html>

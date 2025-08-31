@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page Templates - Choose Your Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .template-card {
+            transition: all 0.3s ease;
+        }
+        .template-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .preview-frame {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .preview-frame:hover {
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Authentication Check -->
+    <div id="authCheck" class="hidden">
+        <div class="min-h-screen flex items-center justify-center bg-gray-50">
+            <div class="max-w-md w-full space-y-8">
+                <div class="text-center">
+                    <div class="mx-auto h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-lock text-3xl text-red-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+                    <p class="text-gray-600 mb-6">Please log in to access the landing page templates.</p>
+                    <div class="space-y-4">
+                        <a href="/auth/login" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-block">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Login
+                        </a>
+                        <a href="/auth/register" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors inline-block">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Register
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+    
+    <!-- Header -->
+    <header class="gradient-bg text-white py-12">
+        <div class="container mx-auto px-4 max-w-6xl text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                Landing Page Templates
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
+                Choose from our collection of fast-loading, high-converting landing page templates
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="/" class="bg-white text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-home mr-2"></i>
+                    Back to Main Site
+                </a>
+                <a href="/clubzila-demo" class="bg-white bg-opacity-20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-opacity-30 transition-colors">
+                    <i class="fas fa-cog mr-2"></i>
+                    Clubzila Demo
+                </a>
+                <button onclick="logout()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Template Selection -->
+    <main class="py-16">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Choose Your Template
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    All templates are optimized for speed, conversion, and mobile responsiveness
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Template 1 -->
+                <div class="template-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="preview-frame">
+                        <iframe src="/templates/1" width="100%" height="400" frameborder="0"></iframe>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">Digital Wealth Mastery</h3>
+                        <p class="text-gray-600 mb-4">Perfect for digital products, courses, and online business opportunities</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">Digital Products</span>
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">Courses</span>
+                            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-semibold">Business</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="/templates/1" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center">
+                                <i class="fas fa-eye mr-2"></i>
+                                Preview
+                            </a>
+                            <button onclick="selectTemplate(1)" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                                <i class="fas fa-check mr-2"></i>
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Template 2 -->
+                <div class="template-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="preview-frame">
+                        <iframe src="/templates/2" width="100%" height="400" frameborder="0"></iframe>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">Fitness Transformation</h3>
+                        <p class="text-gray-600 mb-4">Ideal for fitness programs, wellness services, and health-related products</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">Fitness</span>
+                            <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-semibold">Wellness</span>
+                            <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-semibold">Health</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="/templates/2" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center">
+                                <i class="fas fa-eye mr-2"></i>
+                                Preview
+                            </a>
+                            <button onclick="selectTemplate(2)" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                                <i class="fas fa-check mr-2"></i>
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Template 3 -->
+                <div class="template-card bg-white rounded-xl shadow-lg overflow-hidden">
+                    <div class="preview-frame">
+                        <iframe src="/templates/3" width="100%" height="400" frameborder="0"></iframe>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-3">AI-Powered Analytics</h3>
+                        <p class="text-gray-600 mb-4">Perfect for SaaS products, tech services, and software solutions</p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-semibold">SaaS</span>
+                            <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm font-semibold">Tech</span>
+                            <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm font-semibold">Software</span>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <a href="/templates/3" target="_blank" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors text-center">
+                                <i class="fas fa-eye mr-2"></i>
+                                Preview
+                            </a>
+                            <button onclick="selectTemplate(3)" class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                                <i class="fas fa-check mr-2"></i>
+                                Select
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Why Choose Our Templates?
+                </h2>
+                <p class="text-xl text-gray-600">Built for speed, conversion, and success</p>
+            </div>
+            
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-bolt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Lightning Fast</h3>
+                    <p class="text-gray-600">Static HTML loads in under 100ms</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-mobile-alt text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Mobile Optimized</h3>
+                    <p class="text-gray-600">Perfect on all devices and screen sizes</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">High Converting</h3>
+                    <p class="text-gray-600">Proven layouts that drive results</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-code text-orange-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Easy Customize</h3>
+                    <p class="text-gray-600">Simple to modify and brand</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integration Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Ready to Integrate?
+                </h2>
+                <p class="text-xl text-gray-600">Connect with your existing payment and authentication systems</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Available Integrations</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3 text-xl"></i>
+                            <span class="text-lg">ZenoPay Mobile Money Payments</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3 text-xl"></i>
+                            <span class="text-lg">Clubzila Authentication & Subscriptions</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3 text-xl"></i>
+                            <span class="text-lg">Custom API Endpoints</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3 text-xl"></i>
+                            <span class="text-lg">Webhook Support</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-white p-8 rounded-2xl shadow-xl">
+                        <i class="fas fa-plug text-6xl text-blue-600 mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-4">Easy Integration</h3>
+                        <p class="text-gray-600 mb-6">All templates are ready to connect with your backend APIs and payment systems</p>
+                        <a href="/clubzila-demo" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-cog mr-2"></i>
+                            Test Integrations
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Landing Page Templates</h3>
+                    <p class="text-gray-400">Fast, converting, and customizable landing page templates for your business</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Templates</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/templates/1" class="hover:text-white transition-colors">Digital Wealth Mastery</a></li>
+                        <li><a href="/templates/2" class="hover:text-white transition-colors">Fitness Transformation</a></li>
+                        <li><a href="/templates/3" class="hover:text-white transition-colors">AI-Powered Analytics</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="/" class="hover:text-white transition-colors">Main Site</a></li>
+                        <li><a href="/clubzila-demo" class="hover:text-white transition-colors">Clubzila Demo</a></li>
+                        <li><a href="/health" class="hover:text-white transition-colors">API Status</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Landing Page Templates. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    </div> <!-- End of mainContent -->
+
+    <script>
+        // Authentication check
+        function checkAuthentication() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!user.isAuthenticated || !user.userId || !user.authId) {
+                document.getElementById('authCheck').classList.remove('hidden');
+                document.getElementById('mainContent').classList.add('hidden');
+                return false;
+            }
+            
+            // Check if session is not expired (24 hours)
+            const sessionAge = Date.now() - user.timestamp;
+            const maxSessionAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            
+            if (sessionAge > maxSessionAge) {
+                localStorage.removeItem('user');
+                document.getElementById('authCheck').classList.remove('hidden');
+                document.getElementById('mainContent').classList.add('hidden');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuthentication()) {
+                return;
+            }
+            
+            // Add some interactivity to the preview frames
+            const previewFrames = document.querySelectorAll('.preview-frame');
+            previewFrames.forEach(frame => {
+                frame.addEventListener('mouseenter', function() {
+                    this.style.borderColor = '#3b82f6';
+                });
+                frame.addEventListener('mouseleave', function() {
+                    this.style.borderColor = '#e5e7eb';
+                });
+            });
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('user');
+                window.location.href = '/auth/login';
+            }
+        }
+        function selectTemplate(templateNumber) {
+            const templateNames = {
+                1: 'Digital Wealth Mastery',
+                2: 'Fitness Transformation', 
+                3: 'AI-Powered Analytics'
+            };
+            
+            const selected = confirm(`You've selected the "${templateNames[templateNumber]}" template.\n\nIn production, this would:\n- Copy the template to your project\n- Allow you to customize content\n- Set up your payment integrations\n- Deploy to your domain\n\nWould you like to proceed?`);
+            
+            if (selected) {
+                // In a real application, this would trigger the template selection process
+                alert('Template selection initiated! In production, this would copy the template and set up your custom landing page.');
+                
+                // Redirect to the selected template for preview
+                window.open(`/templates/${templateNumber}`, '_blank');
+            }
+        }
+        
+        // Add some interactivity to the preview frames
+        document.addEventListener('DOMContentLoaded', function() {
+            const previewFrames = document.querySelectorAll('.preview-frame');
+            previewFrames.forEach(frame => {
+                frame.addEventListener('mouseenter', function() {
+                    this.style.borderColor = '#3b82f6';
+                });
+                frame.addEventListener('mouseleave', function() {
+                    this.style.borderColor = '#e5e7eb';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

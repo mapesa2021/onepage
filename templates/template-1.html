@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Wealth Mastery - Template 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .cta-gradient {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .testimonial-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #cbd5e1;
+        }
+        .urgency-badge {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .money-highlight {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <!-- Authentication Check -->
+    <div id="authCheck" class="hidden">
+        <div class="min-h-screen flex items-center justify-center bg-gray-50">
+            <div class="max-w-md w-full space-y-8">
+                <div class="text-center">
+                    <div class="mx-auto h-16 w-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-lock text-3xl text-red-600"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+                    <p class="text-gray-600 mb-6">Please log in to access this template.</p>
+                    <div class="space-y-4">
+                        <a href="/auth/login" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors inline-block">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Login
+                        </a>
+                        <a href="/auth/register" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors inline-block">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            Register
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+    
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center">
+                <!-- Hero Icon -->
+                <div class="mb-8">
+                    <i class="fas fa-rocket text-6xl text-yellow-300"></i>
+                </div>
+                
+                <!-- Main Headline -->
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6">
+                    Master Digital Wealth Creation
+                </h1>
+                
+                <!-- Subheadline -->
+                <p class="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
+                    Learn the proven formula to generate $10,000+ monthly income through digital products and online business
+                </p>
+                
+                <!-- CTA Button -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button class="cta-gradient text-white px-8 py-4 rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity">
+                        <i class="fas fa-play mr-2"></i>
+                        Start Your Journey
+                    </button>
+                    <button class="bg-white text-gray-800 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Learn More
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    The Traditional Income Trap
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Most people are stuck in the 9-5 grind, trading time for money with no real wealth building strategy
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-red-500 text-3xl mb-4">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Limited Income</h3>
+                    <p class="text-gray-600">Fixed salary with no real growth potential or passive income streams</p>
+                </div>
+                
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-red-500 text-3xl mb-4">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Time Bound</h3>
+                    <p class="text-gray-600">Trading precious time for money with no leverage or scalability</p>
+                </div>
+                
+                <div class="feature-card bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-red-500 text-3xl mb-4">
+                        <i class="fas fa-chart-line-down"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">No Wealth Building</h3>
+                    <p class="text-gray-600">Living paycheck to paycheck with no assets or investment strategy</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    The Digital Wealth Solution
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Discover how to create scalable digital products that generate passive income 24/7
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="money-highlight rounded-full p-3 mr-4">
+                                <i class="fas fa-check text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Digital Product Creation</h3>
+                                <p class="text-gray-600">Learn to create high-value digital products that solve real problems</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="money-highlight rounded-full p-3 mr-4">
+                                <i class="fas fa-check text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Passive Income Streams</h3>
+                                <p class="text-gray-600">Build multiple income streams that work while you sleep</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="money-highlight rounded-full p-3 mr-4">
+                                <i class="fas fa-check text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Global Market Access</h3>
+                                <p class="text-gray-600">Reach customers worldwide with automated digital delivery</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start">
+                            <div class="money-highlight rounded-full p-3 mr-4">
+                                <i class="fas fa-check text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2">Scalable Business Model</h3>
+                                <p class="text-gray-600">Create once, sell infinitely with zero marginal cost</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div class="bg-gradient-to-br from-blue-50 to-purple-50 p-8 rounded-2xl">
+                        <i class="fas fa-laptop-code text-6xl text-blue-600 mb-6"></i>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">Digital Products Include:</h3>
+                        <ul class="text-left space-y-3 text-gray-700">
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Online Courses & Training
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                E-books & Digital Guides
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Software & Templates
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Membership Sites
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-play text-green-500 mr-3"></i>
+                                Mobile Applications
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    Success Stories
+                </h2>
+                <p class="text-xl text-gray-600">See how others have transformed their income with digital products</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card p-6 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            S
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Sarah Johnson</h4>
+                            <p class="text-sm text-gray-600">Course Creator</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"I went from $3,000 to $25,000 monthly income by creating online courses. This changed my life!"</p>
+                    <div class="text-yellow-500">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card p-6 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            M
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Mike Chen</h4>
+                            <p class="text-sm text-gray-600">Software Developer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"My digital products now generate $15,000 monthly passive income. Best investment I ever made!"</p>
+                    <div class="text-yellow-500">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card p-6 rounded-lg">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                            L
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Lisa Rodriguez</h4>
+                            <p class="text-sm text-gray-600">Fitness Coach</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"I quit my 9-5 job and now earn $40,000 monthly through my digital fitness programs!"</p>
+                    <div class="text-yellow-500">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 max-w-4xl text-center">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-12 rounded-2xl">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                    Ready to Start Your Digital Wealth Journey?
+                </h2>
+                <p class="text-xl mb-8 opacity-90">
+                    Join thousands of successful entrepreneurs who have transformed their income with digital products
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button class="bg-white text-blue-600 px-8 py-4 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors">
+                        <i class="fas fa-rocket mr-2"></i>
+                        Get Started Now
+                    </button>
+                    <div class="text-sm opacity-75">
+                        <i class="fas fa-clock mr-1"></i>
+                        Limited Time Offer - 50% Off
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-sm opacity-75">
+                    <i class="fas fa-shield-alt mr-1"></i>
+                    30-Day Money Back Guarantee
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4 max-w-6xl">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Digital Wealth Mastery</h3>
+                    <p class="text-gray-400">Transform your income with proven digital product strategies</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Courses</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Success Stories</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Free Guide</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Webinars</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Support</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 Digital Wealth Mastery. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    </div> <!-- End of mainContent -->
+
+    <script>
+        // Authentication check
+        function checkAuthentication() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!user.isAuthenticated || !user.userId || !user.authId) {
+                document.getElementById('authCheck').classList.remove('hidden');
+                document.getElementById('mainContent').classList.add('hidden');
+                return false;
+            }
+            
+            // Check if session is not expired (24 hours)
+            const sessionAge = Date.now() - user.timestamp;
+            const maxSessionAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+            
+            if (sessionAge > maxSessionAge) {
+                localStorage.removeItem('user');
+                document.getElementById('authCheck').classList.remove('hidden');
+                document.getElementById('mainContent').classList.add('hidden');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuthentication()) {
+                return;
+            }
+            
+            // Simple interaction for demo purposes
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('This is a template demo. In production, this would trigger your payment/registration flow.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

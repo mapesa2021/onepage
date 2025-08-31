@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Landing Page Templates</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .input-focus:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .loading {
+            display: none;
+        }
+        .loading.show {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    
+    <div class="max-w-md w-full space-y-8">
+        <!-- Logo/Header -->
+        <div class="text-center">
+            <div class="mx-auto h-16 w-16 bg-white rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-lock text-3xl text-purple-600"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+            <p class="text-white text-opacity-90">Sign in to access your landing page templates</p>
+        </div>
+
+        <!-- Auth Card -->
+        <div class="auth-card rounded-2xl shadow-2xl p-8">
+            
+            <!-- Step 1: Phone Number Input -->
+            <div id="step1" class="step active">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Enter Your Phone Number</h3>
+                
+                <form id="phoneForm" class="space-y-6">
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+                            Phone Number
+                        </label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <span class="text-gray-500 sm:text-sm">+255</span>
+                            </div>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                placeholder="7XXXXXXXX" 
+                                class="input-focus block w-full pl-16 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none transition-all duration-200"
+                                required
+                                pattern="^7\d{8}$"
+                                maxlength="9"
+                            >
+                        </div>
+                        <p class="mt-2 text-sm text-gray-500">Enter your phone number without the country code</p>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="btn-primary w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white"
+                    >
+                        <span class="loading">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>
+                            Sending OTP...
+                        </span>
+                        <span class="btn-text">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            Send OTP
+                        </span>
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Don't have an account? 
+                        <a href="/auth/register" class="font-medium text-purple-600 hover:text-purple-500">
+                            Register here
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Step 2: OTP Verification -->
+            <div id="step2" class="step">
+                <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Verify OTP</h3>
+                
+                <div class="text-center mb-6">
+                    <p class="text-gray-600">We've sent a verification code to</p>
+                    <p class="font-semibold text-gray-900" id="phoneDisplay"></p>
+                </div>
+
+                <form id="otpForm" class="space-y-6">
+                    <div>
+                        <label for="otp" class="block text-sm font-medium text-gray-700 mb-2">
+                            Enter OTP Code
+                        </label>
+                        <input 
+                            type="text" 
+                            id="otp" 
+                            name="otp" 
+                            placeholder="123456" 
+                            class="input-focus block w-full px-3 py-3 border border-gray-300 rounded-lg focus:outline-none transition-all duration-200 text-center text-2xl tracking-widest"
+                            required
+                            pattern="^\d{6}$"
+                            maxlength="6"
+                        >
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="btn-primary w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-sm font-medium text-white"
+                    >
+                        <span class="loading">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>
+                            Verifying...
+                        </span>
+                        <span class="btn-text">
+                            <i class="fas fa-check mr-2"></i>
+                            Verify OTP
+                        </span>
+                    </button>
+                </form>
+
+                <div class="mt-6 text-center space-y-4">
+                    <button 
+                        id="resendOtp" 
+                        class="text-sm text-purple-600 hover:text-purple-500 font-medium"
+                        disabled
+                    >
+                        <span class="resend-text">Resend OTP</span>
+                        <span class="countdown hidden">Resend in <span id="countdown">60</span>s</span>
+                    </button>
+                    
+                    <div>
+                        <button 
+                            id="backToPhone" 
+                            class="text-sm text-gray-600 hover:text-gray-500"
+                        >
+                            <i class="fas fa-arrow-left mr-1"></i>
+                            Back to phone number
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div id="success" class="step text-center">
+                <div class="mb-6">
+                    <div class="mx-auto h-16 w-16 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check text-3xl text-green-600"></i>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">Welcome!</h3>
+                <p class="text-gray-600 mb-6">You've been successfully authenticated.</p>
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin mr-2"></i>
+                    Redirecting to templates...
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="error" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-exclamation-circle text-red-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800" id="errorTitle">Error</h3>
+                        <div class="mt-2 text-sm text-red-700" id="errorMessage">
+                            An error occurred. Please try again.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center">
+            <p class="text-white text-opacity-75 text-sm">
+                Powered by Clubzila Authentication
+            </p>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let userPhone = '';
+        let countdownInterval;
+
+        // Utility functions
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            currentStep = step;
+        }
+
+        function showError(title, message) {
+            document.getElementById('errorTitle').textContent = title;
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('error').classList.add('hidden');
+        }
+
+        function setLoading(button, isLoading) {
+            const loading = button.querySelector('.loading');
+            const btnText = button.querySelector('.btn-text');
+            
+            if (isLoading) {
+                loading.classList.add('show');
+                btnText.style.display = 'none';
+                button.disabled = true;
+            } else {
+                loading.classList.remove('show');
+                btnText.style.display = 'inline';
+                button.disabled = false;
+            }
+        }
+
+        function startCountdown() {
+            const resendBtn = document.getElementById('resendOtp');
+            const resendText = resendBtn.querySelector('.resend-text');
+            const countdownEl = resendBtn.querySelector('.countdown');
+            const countdownNum = document.getElementById('countdown');
+            
+            resendBtn.disabled = true;
+            resendText.classList.add('hidden');
+            countdownEl.classList.remove('hidden');
+            
+            let seconds = 60;
+            countdownNum.textContent = seconds;
+            
+            countdownInterval = setInterval(() => {
+                seconds--;
+                countdownNum.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    resendBtn.disabled = false;
+                    resendText.classList.remove('hidden');
+                    countdownEl.classList.add('hidden');
+                }
+            }, 1000);
+        }
+
+        // Phone number form submission
+        document.getElementById('phoneForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError();
+            
+            const phone = document.getElementById('phone').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            if (!phone.match(/^7\d{8}$/)) {
+                showError('Invalid Phone Number', 'Please enter a valid Tanzanian phone number (7XXXXXXXX)');
+                return;
+            }
+            
+            setLoading(submitBtn, true);
+            
+            try {
+                const response = await fetch('/api/clubzila/request-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phone_number: `255${phone}`
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    userPhone = phone;
+                    document.getElementById('phoneDisplay').textContent = `+255 ${phone}`;
+                    showStep(2);
+                    startCountdown();
+                } else {
+                    showError('OTP Request Failed', result.message || 'Failed to send OTP. Please try again.');
+                }
+            } catch (error) {
+                showError('Network Error', 'Please check your connection and try again.');
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+
+        // OTP form submission
+        document.getElementById('otpForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError();
+            
+            const otp = document.getElementById('otp').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            if (!otp.match(/^\d{6}$/)) {
+                showError('Invalid OTP', 'Please enter a valid 6-digit OTP code');
+                return;
+            }
+            
+            setLoading(submitBtn, true);
+            
+            try {
+                const response = await fetch('/api/clubzila/authenticate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phone_number: `255${userPhone}`,
+                        otp: otp
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Store user data in session/localStorage
+                    localStorage.setItem('user', JSON.stringify({
+                        phone: userPhone,
+                        userId: result.data.user_id,
+                        authId: result.data.auth_id,
+                        isAuthenticated: true,
+                        timestamp: Date.now()
+                    }));
+                    
+                    showStep(3);
+                    
+                    // Redirect to templates after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/templates';
+                    }, 2000);
+                } else {
+                    showError('Authentication Failed', result.message || 'Invalid OTP. Please try again.');
+                }
+            } catch (error) {
+                showError('Network Error', 'Please check your connection and try again.');
+            } finally {
+                setLoading(submitBtn, false);
+            }
+        });
+
+        // Resend OTP
+        document.getElementById('resendOtp').addEventListener('click', async () => {
+            if (document.getElementById('resendOtp').disabled) return;
+            
+            hideError();
+            const resendBtn = document.getElementById('resendOtp');
+            
+            try {
+                const response = await fetch('/api/clubzila/request-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phone_number: `255${userPhone}`
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    startCountdown();
+                    showError('OTP Sent', 'A new OTP has been sent to your phone number.');
+                    setTimeout(() => hideError(), 3000);
+                } else {
+                    showError('Resend Failed', result.message || 'Failed to resend OTP. Please try again.');
+                }
+            } catch (error) {
+                showError('Network Error', 'Please check your connection and try again.');
+            }
+        });
+
+        // Back to phone number
+        document.getElementById('backToPhone').addEventListener('click', () => {
+            showStep(1);
+            document.getElementById('phone').value = '';
+            document.getElementById('otp').value = '';
+            hideError();
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        });
+
+        // Auto-format phone number
+        document.getElementById('phone').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 9) value = value.slice(0, 9);
+            e.target.value = value;
+        });
+
+        // Auto-format OTP
+        document.getElementById('otp').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 6) value = value.slice(0, 6);
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
