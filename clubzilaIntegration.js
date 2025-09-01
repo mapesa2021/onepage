@@ -241,52 +241,117 @@ class ClubzilaIntegration {
     }
 
     /**
-     * Request OTP (DEPRECATED - Clubzila doesn't have separate OTP endpoints)
-     * This method is kept for backward compatibility but doesn't actually send OTP
+     * Request OTP - Demo mode implementation
      */
     async requestOtp(phoneNumber) {
-        console.log(`⚠️ OTP request for ${phoneNumber} - Clubzila doesn't have separate OTP endpoints`);
-        console.log('💡 Use authenticateUser() instead for proper Clubzila integration');
-        
-        // Return a mock response indicating OTP is not required
-        return {
-            success: true,
-            message: 'OTP not required - Clubzila uses immediate activation',
-            data: {
-                message: 'User can be authenticated directly without OTP',
-                phone_number: phoneNumber,
-                requires_otp: false,
-                clubzila_flow: true
-            }
-        };
+        if (this.demoMode) {
+            console.log(`🎭 DEMO MODE: OTP requested for ${phoneNumber}`);
+            console.log('💡 Demo OTP is always: 123456');
+            
+            // Store OTP request in cache for demo mode
+            this.otpCache.set(phoneNumber, true, 60000); // 60 seconds
+            
+            return {
+                success: true,
+                message: 'OTP sent successfully to your phone number',
+                data: {
+                    phone_number: phoneNumber,
+                    requires_otp: true,
+                    demo_mode: true,
+                    message: 'Demo OTP sent. Use 123456 to verify.'
+                }
+            };
+        } else {
+            console.log(`⚠️ OTP request for ${phoneNumber} - Clubzila doesn't have separate OTP endpoints`);
+            console.log('💡 Use authenticateUser() instead for proper Clubzila integration');
+            
+            // Return a mock response indicating OTP is not required
+            return {
+                success: true,
+                message: 'OTP not required - Clubzila uses immediate activation',
+                data: {
+                    message: 'User can be authenticated directly without OTP',
+                    phone_number: phoneNumber,
+                    requires_otp: false,
+                    clubzila_flow: true
+                }
+            };
+        }
     }
 
     /**
-     * Verify OTP (DEPRECATED - Clubzila doesn't have separate OTP endpoints)
-     * This method is kept for backward compatibility but doesn't actually verify OTP
+     * Verify OTP - Demo mode implementation
      */
     async verifyOtp(phoneNumber, otp) {
-        console.log(`⚠️ OTP verification for ${phoneNumber} - Clubzila doesn't have separate OTP endpoints`);
-        console.log('💡 Use authenticateUser() instead for proper Clubzila integration');
-        
-        // Return a mock response indicating OTP verification is not required
-        return {
-            success: true,
-            message: 'OTP verification not required - Clubzila uses immediate activation',
-            data: {
-                user_id: `user_${Date.now()}`,
-                auth_id: `auth_${Date.now()}`,
-                user_data: {
-                    phone_number: phoneNumber,
-                    status: 'active', // Clubzila users are active immediately
-                    verified_at: new Date().toISOString()
-                },
-                is_new_user: false,
-                real_api: true,
-                user_activated: true,
-                requires_otp: false
+        if (this.demoMode) {
+            console.log(`🎭 DEMO MODE: OTP verification for ${phoneNumber} with code ${otp}`);
+            
+            // Check if OTP was requested (demo mode validation)
+            const otpRequested = this.otpCache.get(phoneNumber);
+            if (!otpRequested) {
+                return {
+                    success: false,
+                    message: 'OTP not requested. Please request OTP first.',
+                    error: 'OTP_NOT_REQUESTED'
+                };
             }
-        };
+            
+            // In demo mode, accept any 6-digit OTP, but prefer 123456
+            if (otp === '123456' || (otp.length === 6 && /^\d{6}$/.test(otp))) {
+                console.log('✅ Demo OTP verified successfully');
+                
+                // Clear OTP cache
+                this.otpCache.delete(phoneNumber);
+                
+                return {
+                    success: true,
+                    message: 'OTP verified successfully',
+                    data: {
+                        user_id: `demo_user_${Date.now()}`,
+                        auth_id: `demo_auth_${Date.now()}`,
+                        user_data: {
+                            phone_number: phoneNumber,
+                            status: 'active',
+                            verified_at: new Date().toISOString(),
+                            demo_mode: true
+                        },
+                        is_new_user: true,
+                        demo_mode: true,
+                        user_activated: true,
+                        requires_otp: false
+                    }
+                };
+            } else {
+                return {
+                    success: false,
+                    message: 'Invalid OTP code',
+                    error: 'INVALID_OTP',
+                    demo_mode: true
+                };
+            }
+        } else {
+            console.log(`⚠️ OTP verification for ${phoneNumber} - Clubzila doesn't have separate OTP endpoints`);
+            console.log('💡 Use authenticateUser() instead for proper Clubzila integration');
+            
+            // Return a mock response indicating OTP verification is not required
+            return {
+                success: true,
+                message: 'OTP verification not required - Clubzila uses immediate activation',
+                data: {
+                    user_id: `user_${Date.now()}`,
+                    auth_id: `auth_${Date.now()}`,
+                    user_data: {
+                        phone_number: phoneNumber,
+                        status: 'active', // Clubzila users are active immediately
+                        verified_at: new Date().toISOString()
+                    },
+                    is_new_user: false,
+                    real_api: true,
+                    user_activated: true,
+                    requires_otp: false
+                }
+            };
+        }
     }
 
     /**
