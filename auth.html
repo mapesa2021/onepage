@@ -51,6 +51,7 @@
             <div id="step2" class="hidden space-y-6">
                 <div class="text-center mb-4">
                     <p class="text-white/80" id="otpMessage"></p>
+                    <div id="otpHint" class="mt-2 text-xs text-yellow-200"></div>
                 </div>
                 
                 <div>
@@ -305,12 +306,8 @@
             }
             
             // For testing environments, show OTP so verification can proceed
-            if (otpForTesting) {
-                const hint = document.createElement('div');
-                hint.className = 'mt-2 text-xs text-white/70';
-                hint.textContent = `Test OTP: ${otpForTesting}`;
-                otpMessage.appendChild(hint);
-            }
+            const otpHint = document.getElementById('otpHint');
+            otpHint.textContent = otpForTesting ? `Test OTP: ${otpForTesting}` : '';
             
             // Focus on OTP input
             document.getElementById('otpInput').focus();
