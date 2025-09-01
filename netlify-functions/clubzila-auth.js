@@ -222,6 +222,9 @@ exports.handler = async (event, context) => {
             countryCode
         });
 
+        // Add additional logging for debugging
+        console.log('Final result being returned:', JSON.stringify(result, null, 2));
+
         return {
             statusCode: result.success ? 200 : 400,
             headers,

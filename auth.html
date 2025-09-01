@@ -171,8 +171,8 @@
                 console.log(`- result.user:`, result.user);
 
                 if (result.success) {
-                    // Check if user data is in result.data.user or result.user
-                    const userData = result.data?.user || result.user;
+                    // Check if user data is in result.user (Netlify function) or result.data.user (local server)
+                    const userData = result.user || result.data?.user;
                     
                     if (!userData) {
                         console.error(`❌ No user data found in response:`, result);
@@ -185,8 +185,8 @@
                     localStorage.setItem('clubzila_user', JSON.stringify({
                         user: authenticatedUser,
                         authenticated_at: new Date().toISOString(),
-                        isActive: result.data?.isActive || result.isActive || true,
-                        isNewUser: result.data?.isNewUser || result.isNewUser || true
+                        isActive: result.isActive || result.data?.isActive || true,
+                        isNewUser: result.isNewUser || result.data?.isNewUser || true
                     }));
 
                     console.log(`✅ Main authentication successful:`, authenticatedUser);
@@ -202,7 +202,18 @@
                     message: error.message,
                     stack: error.stack
                 });
-                showError(`Network error: ${error.message}`);
+                
+                // Provide more specific error messages
+                let errorMessage = 'Authentication failed';
+                if (error.message.includes('No user data received')) {
+                    errorMessage = 'Server response format error - please try again';
+                } else if (error.message.includes('Network error')) {
+                    errorMessage = 'Network connection error - please check your internet connection';
+                } else {
+                    errorMessage = `Authentication error: ${error.message}`;
+                }
+                
+                showError(errorMessage);
             }
         }
 
