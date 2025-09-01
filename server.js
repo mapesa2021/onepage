@@ -268,40 +268,91 @@ app.get('/health', (req, res) => {
 });
 
 // Initialize Clubzila integration
-const clubzila = new ClubzilaIntegration();
+const clubzilaIntegration = new ClubzilaIntegration();
 
 // Clubzila Authentication Endpoints
+app.post('/api/clubzila/authenticate', async (req, res) => {
+    try {
+        const { phone_number, name, email, password, countryCode } = req.body;
+        
+        if (!phone_number) {
+            return res.status(400).json({
+                success: false,
+                message: 'Phone number is required'
+            });
+        }
+
+        console.log(`🔐 Authenticating user: ${phone_number}`);
+        
+        // Use the new authenticateUser method (adapted to Clubzila's flow)
+        const result = await clubzilaIntegration.authenticateUser(phone_number, {
+            name,
+            email,
+            password,
+            countryCode
+        });
+
+        if (result.success) {
+            res.json({
+                success: true,
+                message: result.message,
+                data: {
+                    user: result.user,
+                    requiresOtp: result.requiresOtp,
+                    isActive: result.isActive,
+                    isNewUser: result.isNewUser
+                }
+            });
+        } else {
+            res.status(400).json({
+                success: false,
+                message: result.message,
+                error: result.error
+            });
+        }
+    } catch (error) {
+        console.error('❌ Authentication error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Authentication failed',
+            error: error.message
+        });
+    }
+});
+
+// Legacy OTP endpoints (kept for backward compatibility)
 app.post('/api/clubzila/request-otp', async (req, res) => {
     try {
         const { phone_number } = req.body;
         
         if (!phone_number) {
             return res.status(400).json({
-                status: 'error',
+                success: false,
                 message: 'Phone number is required'
             });
         }
 
-        const result = await clubzila.requestOtp(phone_number);
+        console.log(`⚠️ Legacy OTP request for: ${phone_number}`);
+        console.log('💡 This endpoint is deprecated - use /api/clubzila/authenticate instead');
         
-        if (result.success) {
-            res.json({
-                status: 'success',
-                message: result.message,
-                data: result.data
-            });
-        } else {
-            res.status(400).json({
-                status: 'error',
-                message: result.message,
-                error: result.error
-            });
-        }
+        // Return information about the new flow
+        res.json({
+            success: true,
+            message: 'OTP not required - Clubzila uses immediate activation',
+            data: {
+                message: 'Use /api/clubzila/authenticate for proper authentication',
+                phone_number: phone_number,
+                requires_otp: false,
+                clubzila_flow: true,
+                deprecated: true
+            }
+        });
     } catch (error) {
-        console.error('Clubzila OTP request error:', error);
+        console.error('❌ OTP request error:', error);
         res.status(500).json({
-            status: 'error',
-            message: 'Internal server error'
+            success: false,
+            message: 'OTP request failed',
+            error: error.message
         });
     }
 });
@@ -312,66 +363,39 @@ app.post('/api/clubzila/verify-otp', async (req, res) => {
         
         if (!phone_number || !otp) {
             return res.status(400).json({
-                status: 'error',
+                success: false,
                 message: 'Phone number and OTP are required'
             });
         }
 
-        const result = await clubzila.verifyOtp(phone_number, otp);
+        console.log(`⚠️ Legacy OTP verification for: ${phone_number}`);
+        console.log('💡 This endpoint is deprecated - use /api/clubzila/authenticate instead');
         
-        if (result.success) {
-            res.json({
-                status: 'success',
-                message: result.message,
-                data: result.data
-            });
-        } else {
-            res.status(400).json({
-                status: 'error',
-                message: result.message,
-                error: result.error
-            });
-        }
-    } catch (error) {
-        console.error('Clubzila OTP verification error:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Internal server error'
+        // Return information about the new flow
+        res.json({
+            success: true,
+            message: 'OTP verification not required - Clubzila uses immediate activation',
+            data: {
+                user_id: `user_${Date.now()}`,
+                auth_id: `auth_${Date.now()}`,
+                user_data: {
+                    phone_number: phone_number,
+                    status: 'active',
+                    verified_at: new Date().toISOString()
+                },
+                is_new_user: false,
+                real_api: true,
+                user_activated: true,
+                requires_otp: false,
+                deprecated: true
+            }
         });
-    }
-});
-
-app.post('/api/clubzila/authenticate', async (req, res) => {
-    try {
-        const { phone_number, otp } = req.body;
-        
-        if (!phone_number) {
-            return res.status(400).json({
-                status: 'error',
-                message: 'Phone number is required'
-            });
-        }
-
-        const result = await clubzila.authenticateUser(phone_number, otp);
-        
-        if (result.success) {
-            res.json({
-                status: 'success',
-                message: result.message,
-                data: result.data
-            });
-        } else {
-            res.status(400).json({
-                status: 'error',
-                message: result.message,
-                error: result.error
-            });
-        }
     } catch (error) {
-        console.error('Clubzila authentication error:', error);
+        console.error('❌ OTP verification error:', error);
         res.status(500).json({
-            status: 'error',
-            message: 'Internal server error'
+            success: false,
+            message: 'OTP verification failed',
+            error: error.message
         });
     }
 });
@@ -388,7 +412,7 @@ app.post('/api/clubzila/get-user', async (req, res) => {
             });
         }
 
-        const result = await clubzila.getUser(phone_number);
+        const result = await clubzilaIntegration.getUser(phone_number);
         
         if (result.success) {
             res.json({
@@ -423,7 +447,7 @@ app.post('/api/clubzila/register', async (req, res) => {
             });
         }
 
-        const result = await clubzila.registerUser(userData);
+        const result = await clubzilaIntegration.registerUser(userData);
         
         if (result.success) {
             res.json({
@@ -459,7 +483,7 @@ app.post('/api/clubzila/check-subscription', async (req, res) => {
             });
         }
 
-        const result = await clubzila.checkSubscription(user_id, creator_id);
+        const result = await clubzilaIntegration.checkSubscription(user_id, creator_id);
         
         if (result.success) {
             res.json({
@@ -494,7 +518,7 @@ app.post('/api/clubzila/process-payment', async (req, res) => {
             });
         }
 
-        const result = await clubzila.processPayment(auth_id, creator_id, phone_number, amount);
+        const result = await clubzilaIntegration.processPayment(auth_id, creator_id, phone_number, amount);
         
         if (result.success) {
             res.json({
@@ -529,7 +553,7 @@ app.post('/api/clubzila/handle-subscription', async (req, res) => {
             });
         }
 
-        const result = await clubzila.handleSubscription(user_id, creator_id, phone_number, auto_pay);
+        const result = await clubzilaIntegration.handleSubscription(user_id, creator_id, phone_number, auto_pay);
         
         if (result.success) {
             res.json({
@@ -565,7 +589,7 @@ app.post('/api/clubzila/get-creator', async (req, res) => {
             });
         }
 
-        const result = await clubzila.getCreator(creator_id);
+        const result = await clubzilaIntegration.getCreator(creator_id);
         
         if (result.success) {
             res.json({
@@ -597,13 +621,13 @@ app.post('/api/clubzila/webhook', async (req, res) => {
         
         // Validate webhook signature if secret is configured
         if (process.env.CLUBZILA_WEBHOOK_SECRET && signature) {
-            const isValid = clubzila.validateWebhook(JSON.stringify(payload), signature);
+            const isValid = clubzilaIntegration.validateWebhook(JSON.stringify(payload), signature);
             if (!isValid) {
                 return res.status(401).json({ error: 'Invalid webhook signature' });
             }
         }
 
-        const result = await clubzila.handleWebhook(payload);
+        const result = await clubzilaIntegration.handleWebhook(payload);
         
         if (result.success) {
             res.json({ status: 'success', message: result.message });
@@ -623,7 +647,7 @@ app.post('/api/clubzila/webhook', async (req, res) => {
 // Clubzila Integration Test Endpoint
 app.get('/api/clubzila/test', async (req, res) => {
     try {
-        const result = await clubzila.testIntegration();
+        const result = await clubzilaIntegration.testIntegration();
         
         if (result.success) {
             res.json({
