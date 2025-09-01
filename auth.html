@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Authentication - Clubzila Integration</title>
+    <title>Clubzila Authentication</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .gradient-bg {
@@ -18,31 +18,27 @@
 </head>
 <body class="gradient-bg min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">Welcome</h1>
+            <p class="text-white/80">Authenticate with Clubzila to access templates</p>
+        </div>
+
         <!-- Authentication Form -->
         <div class="glass-effect rounded-2xl p-8 shadow-2xl">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-white mb-2">Welcome</h1>
-                <p class="text-white/80">Authenticate with Clubzila to access templates</p>
-            </div>
-
             <!-- Step 1: Phone Number Input -->
             <div id="step1" class="space-y-6">
                 <div>
                     <label class="block text-white text-sm font-medium mb-2">Phone Number</label>
-                    <input type="tel" id="phoneNumber" 
+                    <input type="tel" id="phoneInput" 
                            class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
-                           placeholder="Enter your phone number">
+                           placeholder="Enter your phone number (e.g., 0754546567)"
+                           maxlength="10">
+                    <p class="text-white/60 text-xs mt-1">Enter your phone number to receive OTP</p>
                 </div>
                 
-                <div>
-                    <label class="block text-white text-sm font-medium mb-2">Name (Optional)</label>
-                    <input type="text" id="userName" 
-                           class="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
-                           placeholder="Enter your name">
-                </div>
-
                 <button onclick="requestOTP()" 
-                        class="w-full bg-white text-purple-600 py-3 px-6 rounded-lg font-semibold hover:bg-white/90 transition duration-300">
+                        class="w-full bg-white text-gray-800 py-3 px-6 rounded-lg font-semibold hover:bg-gray-100 transition duration-200">
                     Request OTP
                 </button>
             </div>
@@ -51,7 +47,7 @@
             <div id="step2" class="hidden space-y-6">
                 <div class="text-center mb-4">
                     <p class="text-white/80" id="otpMessage"></p>
-                    <div id="otpHint" class="mt-2 text-xs text-yellow-200"></div>
+                    <p class="text-white/60 text-sm mt-2" id="otpHint"></p>
                 </div>
                 
                 <div>
@@ -62,148 +58,147 @@
                            maxlength="6">
                     <p class="text-white/60 text-xs mt-1">OTP expires in 5 minutes</p>
                 </div>
-
+                
                 <div class="flex space-x-3">
                     <button onclick="verifyOTP()" 
-                            class="flex-1 bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 transition duration-300">
+                            class="flex-1 bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 transition duration-200">
                         Verify OTP
                     </button>
                     <button onclick="resendOTP()" 
-                            class="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition duration-300">
+                            class="flex-1 bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition duration-200">
                         Resend OTP
                     </button>
                 </div>
-
+                
                 <button onclick="backToStep1()" 
-                        class="w-full bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition duration-300">
+                        class="w-full bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200">
                     Back
                 </button>
             </div>
 
             <!-- Loading State -->
             <div id="loading" class="hidden text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-                <p class="text-white">Authenticating with Clubzila...</p>
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+                <p class="text-white/80">Processing...</p>
             </div>
 
-            <!-- Success State -->
-            <div id="success" class="hidden text-center">
-                <div class="text-green-400 text-6xl mb-4">✅</div>
-                <h2 class="text-2xl font-bold text-white mb-2">Authentication Successful!</h2>
-                <p class="text-white/80 mb-6" id="successMessage"></p>
-                <button onclick="redirectToTemplates()" 
-                        class="bg-white text-purple-600 py-3 px-6 rounded-lg font-semibold hover:bg-white/90 transition duration-300">
-                    Access Templates
-                </button>
-            </div>
-
-            <!-- Error State -->
-            <div id="error" class="hidden text-center">
-                <div class="text-red-400 text-6xl mb-4">❌</div>
-                <h2 class="text-2xl font-bold text-white mb-2">Authentication Failed</h2>
-                <p class="text-white/80 mb-6" id="errorMessage"></p>
-                <button onclick="resetForm()" 
-                        class="bg-white text-purple-600 py-3 px-6 rounded-lg font-semibold hover:bg-white/90 transition duration-300">
-                    Try Again
-                </button>
+            <!-- Error Display -->
+            <div id="errorDisplay" class="hidden mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+                <p id="errorMessage" class="text-red-300 text-sm"></p>
             </div>
         </div>
 
-        <!-- Info Card -->
-        <div class="glass-effect rounded-xl p-6 mt-6">
+        <!-- How it works -->
+        <div class="mt-8 text-center">
             <h3 class="text-white font-semibold mb-3">How it works:</h3>
-            <ul class="text-white/80 text-sm space-y-2">
-                <li>• Enter your phone number and name</li>
-                <li>• Request OTP for secure authentication</li>
-                <li>• New users: OTP for registration</li>
-                <li>• Existing users: OTP for login</li>
-                <li>• Enter 6-digit OTP to access templates</li>
-            </ul>
-            
-            <!-- Test Function Button -->
-            <div class="mt-4 pt-4 border-t border-white/20">
-                <button onclick="testNetlifyFunction()" 
-                        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 text-sm">
-                    🧪 Test Netlify Function
-                </button>
-                <button onclick="testFunctionConnectivity()" 
-                        class="ml-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 text-sm">
-                    🔗 Test Connectivity
-                </button>
-                <div id="functionTestResult" class="mt-2 text-xs"></div>
+            <div class="space-y-2 text-white/70 text-sm">
+                <p>• Enter your phone number to receive OTP</p>
+                <p>• Clubzila will send a verification code via SMS</p>
+                <p>• Enter the OTP to complete authentication</p>
+                <p>• Access to all landing page templates</p>
             </div>
+        </div>
+
+        <!-- Test Netlify Function -->
+        <div class="mt-8 text-center">
+            <h3 class="text-white font-semibold mb-3">🧪 Test Netlify Function</h3>
+            <button onclick="testNetlifyFunction()" 
+                    class="bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition duration-200">
+                Test Connectivity
+            </button>
+            <div id="testResult" class="mt-3 text-white/70 text-sm"></div>
         </div>
     </div>
 
     <script>
         let authenticatedUser = null;
-        let otpToken = null;
+        let currentPhoneNumber = null;
+        let isNewUser = false;
 
-        // Request OTP for authentication
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('hidden', !show);
+            document.getElementById('step1').classList.toggle('hidden', show);
+            document.getElementById('step2').classList.toggle('hidden', show);
+        }
+
+        function showError(message) {
+            const errorDisplay = document.getElementById('errorDisplay');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.textContent = message;
+            errorDisplay.classList.remove('hidden');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                errorDisplay.classList.add('hidden');
+            }, 5000);
+        }
+
+        function hideError() {
+            document.getElementById('errorDisplay').classList.add('hidden');
+        }
+
         async function requestOTP() {
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const userName = document.getElementById('userName').value.trim();
+            const phoneNumber = document.getElementById('phoneInput').value.trim();
             
             if (!phoneNumber) {
-                showError('Please enter your phone number');
+                showError('Please enter a phone number');
                 return;
             }
 
-            // Show loading
-            showLoading();
+            if (phoneNumber.length < 10) {
+                showError('Please enter a valid phone number (at least 10 digits)');
+                return;
+            }
+
+            showLoading(true);
+            hideError();
 
             try {
-                const isNetlify = window.location.hostname.includes('netlify.app') || 
-                                window.location.hostname.includes('netlify.com') ||
-                                window.location.hostname.includes('vercel.app') ||
-                                window.location.hostname.includes('vercel.com');
-                
-                const apiUrl = isNetlify ? '/.netlify/functions/clubzila-auth' : '/api/clubzila/authenticate';
-                
-                console.log(`🔍 Requesting OTP for: ${phoneNumber}`);
-
-                const requestBody = {
-                    action: 'request-otp',
-                    phone_number: phoneNumber,
-                    name: userName || `User_${phoneNumber}`,
-                    email: `${phoneNumber}@clubzila.com`,
-                    password: phoneNumber,
-                    countryCode: '255'
-                };
-
-                const response = await fetch(apiUrl, {
+                const response = await fetch('/.netlify/functions/clubzila-auth', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(requestBody)
+                    body: JSON.stringify({
+                        phone_number: phoneNumber,
+                        action: 'request-otp'
+                    })
                 });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
-                }
-
                 const result = await response.json();
-                console.log(`📥 OTP request response:`, result);
+                showLoading(false);
 
                 if (result.success) {
-                    otpToken = result.otp_token || null;
-                    // Show OTP input step (include OTP for testing)
-                    showOTPStep(result.message, result.isNewUser, result.otp);
+                    currentPhoneNumber = phoneNumber;
+                    isNewUser = result.isNewUser;
+                    showOTPStep(result.message, result.isNewUser);
                 } else {
-                    showError(result.message || 'Failed to send OTP');
+                    showError(result.message || 'Failed to request OTP');
                 }
             } catch (error) {
-                console.error('❌ OTP request error:', error);
-                showError(`Failed to send OTP: ${error.message}`);
+                showLoading(false);
+                console.error('Error requesting OTP:', error);
+                showError('Network error: ' + error.message);
             }
         }
 
-        // Verify OTP and complete authentication
+        function showOTPStep(message, isNewUser) {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            
+            const otpMessage = document.getElementById('otpMessage');
+            const otpHint = document.getElementById('otpHint');
+            
+            if (isNewUser) {
+                otpMessage.textContent = `OTP sent for new user registration`;
+                otpHint.textContent = `Check your SMS for the verification code`;
+            } else {
+                otpMessage.textContent = `OTP sent for existing user login`;
+                otpHint.textContent = `Check your SMS for the verification code`;
+            }
+        }
+
         async function verifyOTP() {
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const userName = document.getElementById('userName').value.trim();
             const otp = document.getElementById('otpInput').value.trim();
             
             if (!otp) {
@@ -211,276 +206,115 @@
                 return;
             }
 
-            // Show loading
-            showLoading();
-
-            try {
-                const isNetlify = window.location.hostname.includes('netlify.app') || 
-                                window.location.hostname.includes('netlify.com') ||
-                                window.location.hostname.includes('vercel.app') ||
-                                window.location.hostname.includes('vercel.com');
-                
-                const apiUrl = isNetlify ? '/.netlify/functions/clubzila-auth' : '/api/clubzila/authenticate';
-                
-                console.log(`🔍 Verifying OTP for: ${phoneNumber}`);
-
-                const requestBody = {
-                    phone_number: phoneNumber,
-                    name: userName || `User_${phoneNumber}`,
-                    email: `${phoneNumber}@clubzila.com`,
-                    password: phoneNumber,
-                    countryCode: '255',
-                    otp: otp,
-                    otp_token: otpToken
-                };
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
-                }
-
-                const result = await response.json();
-                console.log(`📥 OTP verification response:`, result);
-
-                if (result.success) {
-                    // Check if user data is in result.user (Netlify function) or result.data.user (local server)
-                    const userData = result.user || result.data?.user;
-                    
-                    if (!userData) {
-                        console.error(`❌ No user data found in response:`, result);
-                        throw new Error('No user data received from server');
-                    }
-                    
-                    authenticatedUser = userData;
-                    
-                    // Store user session
-                    localStorage.setItem('clubzila_user', JSON.stringify({
-                        user: authenticatedUser,
-                        authenticated_at: new Date().toISOString(),
-                        isActive: result.isActive || result.data?.isActive || true,
-                        isNewUser: result.isNewUser || result.data?.isNewUser || true
-                    }));
-
-                    console.log(`✅ OTP verification successful:`, authenticatedUser);
-                    showSuccess(result.message);
-                } else {
-                    if (result.requiresOtp) {
-                        // OTP verification failed, show error but stay on OTP step
-                        showOTPError(result.message);
-                    } else {
-                        showError(result.message || 'Authentication failed');
-                    }
-                }
-            } catch (error) {
-                console.error('❌ OTP verification error:', error);
-                showError(`Authentication failed: ${error.message}`);
-            }
-        }
-
-        // Resend OTP
-        async function resendOTP() {
-            await requestOTP();
-        }
-
-        // Show OTP input step
-        function showOTPStep(message, isNewUser, otpForTesting) {
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('step2').classList.remove('hidden');
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('success').classList.add('hidden');
-            document.getElementById('error').classList.add('hidden');
-            
-            const otpMessage = document.getElementById('otpMessage');
-            if (isNewUser) {
-                otpMessage.textContent = 'OTP sent for new user registration. Please check your phone and enter the 6-digit code.';
-            } else {
-                otpMessage.textContent = 'OTP sent for existing user login. Please check your phone and enter the 6-digit code.';
-            }
-            
-            // For testing environments, show OTP so verification can proceed
-            const otpHint = document.getElementById('otpHint');
-            otpHint.textContent = otpForTesting ? `Test OTP: ${otpForTesting}` : '';
-            
-            // Focus on OTP input
-            document.getElementById('otpInput').focus();
-        }
-
-        // Show OTP error but stay on OTP step
-        function showOTPError(message) {
-            document.getElementById('loading').classList.add('hidden');
-            
-            // Show error message above OTP input
-            const otpMessage = document.getElementById('otpMessage');
-            otpMessage.textContent = `❌ ${message}`;
-            otpMessage.className = 'text-center mb-4 text-red-400';
-            
-            // Clear OTP input
-            document.getElementById('otpInput').value = '';
-            document.getElementById('otpInput').focus();
-        }
-
-        // Go back to step 1
-        function backToStep1() {
-            document.getElementById('step1').classList.remove('hidden');
-            document.getElementById('step2').classList.add('hidden');
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('success').classList.add('hidden');
-            document.getElementById('error').classList.add('hidden');
-            
-            // Reset OTP input
-            document.getElementById('otpInput').value = '';
-        }
-
-        function showLoading() {
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('loading').classList.remove('hidden');
-            document.getElementById('success').classList.add('hidden');
-            document.getElementById('error').classList.add('hidden');
-        }
-
-        function showSuccess(message) {
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('success').classList.remove('hidden');
-            document.getElementById('error').classList.add('hidden');
-            document.getElementById('successMessage').textContent = message;
-        }
-
-        function showError(message) {
-            document.getElementById('step1').classList.add('hidden');
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('success').classList.add('hidden');
-            document.getElementById('error').classList.remove('hidden');
-            document.getElementById('errorMessage').textContent = message;
-        }
-
-        function resetForm() {
-            document.getElementById('step1').classList.remove('hidden');
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('success').classList.add('hidden');
-            document.getElementById('error').classList.add('hidden');
-            document.getElementById('phoneNumber').value = '';
-            document.getElementById('userName').value = '';
-        }
-
-        function redirectToTemplates() {
-            window.location.href = '/templates.html';
-        }
-
-        // Check if user is already authenticated
-        window.addEventListener('load', function() {
-            const storedUser = localStorage.getItem('clubzila_user');
-            if (storedUser) {
-                try {
-                    const userData = JSON.parse(storedUser);
-                    const authTime = new Date(userData.authenticated_at);
-                    const now = new Date();
-                    const hoursDiff = (now - authTime) / (1000 * 60 * 60);
-                    
-                    // If authenticated within last 24 hours, redirect to templates
-                    if (hoursDiff < 24) {
-                        authenticatedUser = userData.user;
-                        showSuccess('Welcome back! You are already authenticated.');
-                    } else {
-                        // Clear expired session
-                        localStorage.removeItem('clubzila_user');
-                    }
-                } catch (error) {
-                    localStorage.removeItem('clubzila_user');
-                }
-            }
-        });
-
-        async function testNetlifyFunction() {
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
-            const userName = document.getElementById('userName').value.trim();
-            const resultDiv = document.getElementById('functionTestResult');
-
-            if (!phoneNumber) {
-                resultDiv.textContent = 'Please enter a phone number to test.';
+            if (otp.length !== 6) {
+                showError('Please enter a valid 6-digit OTP');
                 return;
             }
 
-            resultDiv.textContent = 'Testing...';
-            try {
-                const isNetlify = window.location.hostname.includes('netlify.app') || 
-                                window.location.hostname.includes('netlify.com') ||
-                                window.location.hostname.includes('vercel.app') ||
-                                window.location.hostname.includes('vercel.com');
-                
-                const apiUrl = isNetlify ? '/.netlify/functions/clubzila-auth' : '/api/clubzila/authenticate';
-                
-                console.log(`Using API endpoint: ${apiUrl} (Netlify: ${isNetlify})`);
+            showLoading(true);
+            hideError();
 
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        phone_number: phoneNumber,
-                        name: userName || `User_${phoneNumber}`,
-                        email: `${phoneNumber}@clubzila.com`,
-                        password: phoneNumber,
-                        countryCode: '255'
-                    })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    resultDiv.textContent = `✅ Test Successful! Message: ${result.message}`;
-                    resultDiv.style.color = 'green';
-                } else {
-                    resultDiv.textContent = `❌ Test Failed. Message: ${result.message || 'Unknown error'}`;
-                    resultDiv.style.color = 'red';
-                }
-            } catch (error) {
-                console.error('Netlify function test error:', error);
-                resultDiv.textContent = '❌ Network error during test.';
-                resultDiv.style.color = 'red';
-            }
-        }
-
-        async function testFunctionConnectivity() {
-            const resultDiv = document.getElementById('functionTestResult');
-            resultDiv.textContent = 'Testing connectivity...';
             try {
                 const response = await fetch('/.netlify/functions/clubzila-auth', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        phone_number: '0000000000',
-                        name: 'Connectivity Test',
-                        email: 'test@connectivity.com',
-                        password: 'test123',
-                        countryCode: '255'
+                        phone_number: currentPhoneNumber,
+                        name: `User_${currentPhoneNumber}`,
+                        email: `${currentPhoneNumber}@clubzila.com`,
+                        password: currentPhoneNumber,
+                        countryCode: '255',
+                        action: 'authenticate',
+                        otp: otp
                     })
                 });
-                
-                if (response.ok) {
-                    resultDiv.textContent = '✅ Function is accessible and responding.';
-                    resultDiv.style.color = 'green';
+
+                const result = await response.json();
+                showLoading(false);
+
+                if (result.success) {
+                    // Store user data
+                    localStorage.setItem('clubzila_user', JSON.stringify({
+                        user: result.user,
+                        timestamp: Date.now()
+                    }));
+                    
+                    // Show success and redirect
+                    showSuccess(result.message);
+                    setTimeout(() => {
+                        window.location.href = '/templates.html';
+                    }, 2000);
                 } else {
-                    resultDiv.textContent = `❌ Function error. Status: ${response.status} ${response.statusText}`;
-                    resultDiv.style.color = 'red';
+                    showError(result.message || 'OTP verification failed');
                 }
             } catch (error) {
-                console.error('Function connectivity test error:', error);
-                resultDiv.textContent = '❌ Network error during connectivity test.';
-                resultDiv.style.color = 'red';
+                showLoading(false);
+                console.error('Error verifying OTP:', error);
+                showError('Network error: ' + error.message);
             }
         }
+
+        function resendOTP() {
+            if (currentPhoneNumber) {
+                requestOTP();
+            }
+        }
+
+        function backToStep1() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('otpInput').value = '';
+            hideError();
+        }
+
+        function showSuccess(message) {
+            // Create success message
+            const successDiv = document.createElement('div');
+            successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        async function testNetlifyFunction() {
+            const testResult = document.getElementById('testResult');
+            testResult.textContent = 'Testing...';
+            
+            try {
+                const response = await fetch('/.netlify/functions/clubzila-auth', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        phone_number: '0754546567',
+                        action: 'request-otp'
+                    })
+                });
+
+                if (response.ok) {
+                    testResult.textContent = '✅ Function is accessible and responding.';
+                    testResult.className = 'mt-3 text-green-400 text-sm';
+                } else {
+                    testResult.textContent = '❌ Function responded with error.';
+                    testResult.className = 'mt-3 text-red-400 text-sm';
+                }
+            } catch (error) {
+                testResult.textContent = '❌ Function is not accessible.';
+                testResult.className = 'mt-3 text-red-400 text-sm';
+            }
+        }
+
+        // Auto-focus phone input
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('phoneInput').focus();
+        });
     </script>
 </body>
 </html>
