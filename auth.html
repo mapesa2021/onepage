@@ -136,6 +136,7 @@
 
     <script>
         let authenticatedUser = null;
+        let otpToken = null;
 
         // Request OTP for authentication
         async function requestOTP() {
@@ -186,6 +187,7 @@
                 console.log(`📥 OTP request response:`, result);
 
                 if (result.success) {
+                    otpToken = result.otp_token || null;
                     // Show OTP input step (include OTP for testing)
                     showOTPStep(result.message, result.isNewUser, result.otp);
                 } else {
@@ -227,7 +229,8 @@
                     email: `${phoneNumber}@clubzila.com`,
                     password: phoneNumber,
                     countryCode: '255',
-                    otp: otp
+                    otp: otp,
+                    otp_token: otpToken
                 };
 
                 const response = await fetch(apiUrl, {

@@ -1,11 +1,12 @@
 // Simplified Clubzila Integration for Netlify Functions (No external dependencies)
+const crypto = require('crypto');
 class ClubzilaIntegration {
     constructor() {
         this.apiUrl = process.env.CLUBZILA_API_URL || 'https://clubzila.com';
         this.timeout = 30000;
         this.sessionCookies = [];
-        // Store OTP codes temporarily (in production, use a database)
-        this.otpStore = new Map();
+        // Stateless OTP secret (configure in environment)
+        this.otpSecret = process.env.OTP_SECRET || 'dev_secret_change_me';
     }
 
     async getCsrfToken() {
@@ -60,46 +61,55 @@ class ClubzilaIntegration {
         }
     }
 
-    // Generate and store OTP
+    // Generate OTP code
     generateOTP(phoneNumber) {
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expiry = Date.now() + (5 * 60 * 1000); // 5 minutes expiry
-        
-        this.otpStore.set(phoneNumber, {
-            code: otp,
-            expiry: expiry,
-            attempts: 0
-        });
-        
         console.log(`OTP generated for ${phoneNumber}: ${otp} (expires in 5 minutes)`);
         return otp;
     }
 
-    // Verify OTP
-    verifyOTP(phoneNumber, otp) {
-        const storedOTP = this.otpStore.get(phoneNumber);
-        
-        if (!storedOTP) {
-            return { valid: false, message: 'OTP expired or not found' };
+    // Create a signed token that encodes phone, otp and expiry (stateless)
+    createOtpToken(phoneNumber, otp, ttlMs = 5 * 60 * 1000) {
+        const payload = {
+            phone: phoneNumber,
+            otp,
+            exp: Date.now() + ttlMs
+        };
+        const payloadStr = JSON.stringify(payload);
+        const sig = crypto
+            .createHmac('sha256', this.otpSecret)
+            .update(payloadStr)
+            .digest('hex');
+        const token = Buffer.from(payloadStr).toString('base64url') + '.' + sig;
+        return token;
+    }
+
+    // Verify the signed OTP token
+    verifyOtpToken(token) {
+        try {
+            const [b64, sig] = token.split('.');
+            if (!b64 || !sig) return null;
+            const payloadStr = Buffer.from(b64, 'base64url').toString('utf8');
+            const expectedSig = crypto
+                .createHmac('sha256', this.otpSecret)
+                .update(payloadStr)
+                .digest('hex');
+            if (expectedSig !== sig) return null;
+            const payload = JSON.parse(payloadStr);
+            if (!payload || typeof payload.exp !== 'number' || Date.now() > payload.exp) return null;
+            return payload;
+        } catch (e) {
+            return null;
         }
-        
-        if (Date.now() > storedOTP.expiry) {
-            this.otpStore.delete(phoneNumber);
-            return { valid: false, message: 'OTP expired' };
-        }
-        
-        if (storedOTP.attempts >= 3) {
-            this.otpStore.delete(phoneNumber);
-            return { valid: false, message: 'Too many failed attempts' };
-        }
-        
-        if (storedOTP.code === otp) {
-            this.otpStore.delete(phoneNumber);
-            return { valid: true, message: 'OTP verified successfully' };
-        } else {
-            storedOTP.attempts++;
-            return { valid: false, message: 'Invalid OTP' };
-        }
+    }
+
+    // Verify OTP using stateless token
+    verifyOTP(phoneNumber, otp, otpToken) {
+        const payload = this.verifyOtpToken(otpToken || '');
+        if (!payload) return { valid: false, message: 'OTP expired or not found' };
+        if (payload.phone !== phoneNumber) return { valid: false, message: 'Phone mismatch' };
+        if (payload.otp !== otp) return { valid: false, message: 'Invalid OTP' };
+        return { valid: true, message: 'OTP verified successfully' };
     }
 
     // Activate user after OTP verification
@@ -168,6 +178,7 @@ class ClubzilaIntegration {
             
             // Generate OTP
             const otp = this.generateOTP(phoneNumber);
+            const otpToken = this.createOtpToken(phoneNumber, otp);
             
             // Simulate sending OTP via SMS
             await this.sendOTP(phoneNumber, otp);
@@ -180,6 +191,7 @@ class ClubzilaIntegration {
                     'OTP sent for new user registration' : 
                     'OTP sent for existing user login',
                 otp: otp, // Keep this for testing - remove in production
+                otp_token: otpToken,
                 expiresIn: '5 minutes'
             };
         } catch (error) {
@@ -218,7 +230,7 @@ class ClubzilaIntegration {
         }
     }
 
-    async authenticateUser(phoneNumber, userData = {}, otp = null) {
+    async authenticateUser(phoneNumber, userData = {}, otp = null, otpToken = null) {
         try {
             console.log(`Authenticating user: ${phoneNumber} with OTP: ${otp ? 'provided' : 'not provided'}`);
             
@@ -228,7 +240,7 @@ class ClubzilaIntegration {
             }
             
             // Verify OTP
-            const otpVerification = this.verifyOTP(phoneNumber, otp);
+            const otpVerification = this.verifyOTP(phoneNumber, otp, otpToken);
             if (!otpVerification.valid) {
                 return {
                     success: false,
@@ -418,7 +430,7 @@ exports.handler = async (event, context) => {
 
     try {
         const requestBody = JSON.parse(event.body);
-        const { phone_number, name, email, password, countryCode, otp, action } = requestBody;
+        const { phone_number, name, email, password, countryCode, otp, action, otp_token } = requestBody;
         
         if (!phone_number) {
             return {
@@ -451,7 +463,7 @@ exports.handler = async (event, context) => {
                 email,
                 password,
                 countryCode
-            }, otp);
+            }, otp, otp_token);
         }
 
         // Add additional logging for debugging
