@@ -85,6 +85,15 @@
                 <li>• No OTP required - immediate activation</li>
                 <li>• Access to all landing page templates</li>
             </ul>
+            
+            <!-- Test Function Button -->
+            <div class="mt-4 pt-4 border-t border-white/20">
+                <button onclick="testNetlifyFunction()" 
+                        class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 text-sm">
+                    🧪 Test Netlify Function
+                </button>
+                <div id="functionTestResult" class="mt-2 text-xs"></div>
+            </div>
         </div>
     </div>
 
@@ -210,6 +219,57 @@
                 }
             }
         });
+
+        async function testNetlifyFunction() {
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const userName = document.getElementById('userName').value.trim();
+            const resultDiv = document.getElementById('functionTestResult');
+
+            if (!phoneNumber) {
+                resultDiv.textContent = 'Please enter a phone number to test.';
+                return;
+            }
+
+            resultDiv.textContent = 'Testing...';
+            try {
+                const isNetlify = window.location.hostname.includes('netlify.app') || 
+                                window.location.hostname.includes('netlify.com') ||
+                                window.location.hostname.includes('vercel.app') ||
+                                window.location.hostname.includes('vercel.com');
+                
+                const apiUrl = isNetlify ? '/.netlify/functions/clubzila-auth' : '/api/clubzila/authenticate';
+                
+                console.log(`Using API endpoint: ${apiUrl} (Netlify: ${isNetlify})`);
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phone_number: phoneNumber,
+                        name: userName || `User_${phoneNumber}`,
+                        email: `${phoneNumber}@clubzila.com`,
+                        password: phoneNumber,
+                        countryCode: '255'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultDiv.textContent = `✅ Test Successful! Message: ${result.message}`;
+                    resultDiv.style.color = 'green';
+                } else {
+                    resultDiv.textContent = `❌ Test Failed. Message: ${result.message || 'Unknown error'}`;
+                    resultDiv.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Netlify function test error:', error);
+                resultDiv.textContent = '❌ Network error during test.';
+                resultDiv.style.color = 'red';
+            }
+        }
     </script>
 </body>
 </html>
