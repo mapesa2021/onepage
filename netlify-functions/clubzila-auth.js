@@ -43,26 +43,18 @@ class ClubzilaIntegration {
         try {
             console.log(`Checking if user exists: ${phoneNumber}`);
             
-            // Try to access user profile or login page
-            const response = await fetch(`${this.apiUrl}/login`, {
-                method: 'GET',
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (compatible; ClubzilaBot/1.0)',
-                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-                }
-            });
-            
-            // For now, we'll assume user exists if we can access login page
+            // For now, we'll assume user doesn't exist to trigger registration flow
             // In a real implementation, you'd check against Clubzila's user database
+            // This ensures new users go through the proper registration + OTP verification flow
             return {
-                exists: true, // Assume user exists for now
-                message: 'User check completed'
+                exists: false, // Assume new user to trigger registration flow
+                message: 'User check completed - proceeding with registration'
             };
         } catch (error) {
             console.error('User existence check failed:', error);
             return {
                 exists: false,
-                message: 'User check failed',
+                message: 'User check failed - proceeding with registration',
                 error: error.message
             };
         }
@@ -110,6 +102,61 @@ class ClubzilaIntegration {
         }
     }
 
+    // Activate user after OTP verification
+    async activateUser(phoneNumber) {
+        try {
+            console.log(`Activating user: ${phoneNumber}`);
+            
+            // Get pending user data
+            const pendingUser = this.pendingUsers?.get(phoneNumber);
+            if (!pendingUser) {
+                return {
+                    success: false,
+                    message: 'No pending user found for activation'
+                };
+            }
+            
+            // Now register the user with Clubzila
+            const registration = await this.registerUser({
+                phone_number: pendingUser.phone_number,
+                name: pendingUser.name,
+                email: pendingUser.email,
+                password: pendingUser.password,
+                countryCode: pendingUser.countryCode
+            });
+            
+            if (registration.success) {
+                // Remove from pending users
+                this.pendingUsers.delete(phoneNumber);
+                
+                // Return activated user
+                return {
+                    success: true,
+                    user: {
+                        ...registration.data.user_data,
+                        status: 'active',
+                        clubzila_active: true,
+                        activated_at: new Date().toISOString()
+                    },
+                    message: "User activated successfully in Clubzila"
+                };
+            } else {
+                return {
+                    success: false,
+                    message: "Failed to activate user in Clubzila",
+                    error: registration.error
+                };
+            }
+        } catch (error) {
+            console.error('User activation failed:', error);
+            return {
+                success: false,
+                message: 'User activation failed',
+                error: error.message
+            };
+        }
+    }
+
     // Request OTP for authentication
     async requestOTP(phoneNumber, userData = {}) {
         try {
@@ -122,9 +169,8 @@ class ClubzilaIntegration {
             // Generate OTP
             const otp = this.generateOTP(phoneNumber);
             
-            // In a real implementation, you'd send this OTP via SMS
-            // For now, we'll just return it in the response for testing
-            console.log(`OTP sent to ${phoneNumber}: ${otp}`);
+            // Simulate sending OTP via SMS
+            await this.sendOTP(phoneNumber, otp);
             
             return {
                 success: true,
@@ -133,7 +179,7 @@ class ClubzilaIntegration {
                 message: isNewUser ? 
                     'OTP sent for new user registration' : 
                     'OTP sent for existing user login',
-                otp: otp, // Remove this in production - only for testing
+                otp: otp, // Keep this for testing - remove in production
                 expiresIn: '5 minutes'
             };
         } catch (error) {
@@ -143,6 +189,32 @@ class ClubzilaIntegration {
                 message: 'Failed to send OTP',
                 error: error.message
             };
+        }
+    }
+
+    // Simulate sending OTP via SMS
+    async sendOTP(phoneNumber, otp) {
+        try {
+            // In a real implementation, this would integrate with an SMS service
+            // For now, we'll simulate the SMS sending process
+            
+            console.log(`📱 SMS Simulation: Sending OTP ${otp} to ${phoneNumber}`);
+            console.log(`📱 SMS Content: "Your Clubzila verification code is: ${otp}. Valid for 5 minutes."`);
+            
+            // Simulate SMS delivery delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            console.log(`✅ SMS delivered successfully to ${phoneNumber}`);
+            
+            // In production, you would integrate with services like:
+            // - Twilio
+            // - AWS SNS
+            // - Africa's Talking
+            // - Or any local SMS gateway
+            
+        } catch (error) {
+            console.error('SMS sending failed:', error);
+            throw new Error('Failed to send SMS');
         }
     }
 
@@ -164,41 +236,32 @@ class ClubzilaIntegration {
                     requiresOtp: true
                 };
             }
-            
-            // Check if user exists to determine if this is registration or login
-            const userCheck = await this.checkUserExists(phoneNumber);
-            const isNewUser = !userCheck.exists;
-            
-            if (isNewUser) {
-                // Register new user
-                console.log(`Registering new user: ${phoneNumber}`);
-                const registration = await this.registerUser({
-                    phone_number: phoneNumber,
-                    name: userData.name || `User_${phoneNumber}`,
-                    email: userData.email || `${phoneNumber}@clubzila.com`,
-                    password: userData.password || phoneNumber,
-                    countryCode: userData.countryCode || '255'
-                });
-                
-                if (registration.success) {
-                    return {
-                        success: true,
-                        user: registration.data.user_data,
-                        requiresOtp: false,
-                        isActive: true,
-                        isNewUser: true,
-                        message: "User registered and authenticated successfully"
-                    };
-                } else {
-                    return {
-                        success: false,
-                        message: "Failed to register user",
-                        error: registration.error
-                    };
-                }
-            } else {
-                // Existing user login
-                console.log(`Logging in existing user: ${phoneNumber}`);
+
+            // OTP is valid → attempt registration; if email exists, treat as existing login
+            console.log(`OTP verified for ${phoneNumber}. Proceeding to register or login.`);
+            const registration = await this.registerUser({
+                phone_number: phoneNumber,
+                name: userData.name || `User_${phoneNumber}`,
+                email: userData.email || `${phoneNumber}@clubzila.com`,
+                password: userData.password || phoneNumber,
+                countryCode: userData.countryCode || '255'
+            });
+
+            if (registration.success) {
+                return {
+                    success: true,
+                    user: registration.data.user_data,
+                    requiresOtp: false,
+                    isActive: true,
+                    isNewUser: true,
+                    message: "User registered and activated successfully"
+                };
+            }
+
+            // If registration failed due to existing email, consider as existing user login
+            const regError = (registration.error || registration.message || '').toString().toLowerCase();
+            if (regError.includes('email') && regError.includes('taken')) {
+                console.log(`Email already taken for ${phoneNumber}. Treating as existing user login.`);
                 return {
                     success: true,
                     user: {
@@ -212,9 +275,16 @@ class ClubzilaIntegration {
                     requiresOtp: false,
                     isActive: true,
                     isNewUser: false,
-                    message: "User authenticated successfully"
+                    message: "Existing user authenticated successfully"
                 };
             }
+
+            // Other registration failures
+            return {
+                success: false,
+                message: registration.message || 'Authentication failed',
+                error: registration.error
+            };
         } catch (error) {
             console.error('Authentication failed:', error);
             return {
