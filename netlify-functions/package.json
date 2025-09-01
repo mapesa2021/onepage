@@ -1,0 +1,21 @@
+{
+  "name": "netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify functions for Clubzila integration",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "netlify",
+    "functions",
+    "clubzila",
+    "authentication"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
