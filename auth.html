@@ -186,8 +186,8 @@
                 console.log(`📥 OTP request response:`, result);
 
                 if (result.success) {
-                    // Show OTP input step
-                    showOTPStep(result.message, result.isNewUser);
+                    // Show OTP input step (include OTP for testing)
+                    showOTPStep(result.message, result.isNewUser, result.otp);
                 } else {
                     showError(result.message || 'Failed to send OTP');
                 }
@@ -287,7 +287,7 @@
         }
 
         // Show OTP input step
-        function showOTPStep(message, isNewUser) {
+        function showOTPStep(message, isNewUser, otpForTesting) {
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             document.getElementById('loading').classList.add('hidden');
@@ -299,6 +299,14 @@
                 otpMessage.textContent = 'OTP sent for new user registration. Please check your phone and enter the 6-digit code.';
             } else {
                 otpMessage.textContent = 'OTP sent for existing user login. Please check your phone and enter the 6-digit code.';
+            }
+            
+            // For testing environments, show OTP so verification can proceed
+            if (otpForTesting) {
+                const hint = document.createElement('div');
+                hint.className = 'mt-2 text-xs text-white/70';
+                hint.textContent = `Test OTP: ${otpForTesting}`;
+                otpMessage.appendChild(hint);
             }
             
             // Focus on OTP input
