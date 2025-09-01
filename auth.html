@@ -92,6 +92,10 @@
                         class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300 text-sm">
                     🧪 Test Netlify Function
                 </button>
+                <button onclick="testFunctionConnectivity()" 
+                        class="ml-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300 text-sm">
+                    🔗 Test Connectivity
+                </button>
                 <div id="functionTestResult" class="mt-2 text-xs"></div>
             </div>
         </div>
@@ -267,6 +271,25 @@
             } catch (error) {
                 console.error('Netlify function test error:', error);
                 resultDiv.textContent = '❌ Network error during test.';
+                resultDiv.style.color = 'red';
+            }
+        }
+
+        async function testFunctionConnectivity() {
+            const resultDiv = document.getElementById('functionTestResult');
+            resultDiv.textContent = 'Testing connectivity...';
+            try {
+                const response = await fetch('/.netlify/functions/clubzila-auth');
+                if (response.ok) {
+                    resultDiv.textContent = '✅ Function is accessible.';
+                    resultDiv.style.color = 'green';
+                } else {
+                    resultDiv.textContent = `❌ Function is not accessible. Status: ${response.status} ${response.statusText}`;
+                    resultDiv.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Function connectivity test error:', error);
+                resultDiv.textContent = '❌ Network error during connectivity test.';
                 resultDiv.style.color = 'red';
             }
         }
