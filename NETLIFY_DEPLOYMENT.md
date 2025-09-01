@@ -7,9 +7,9 @@ This guide explains how to deploy the Clubzila authentication system to Netlify 
 ```
 ├── auth.html                 # Authentication page
 ├── templates.html           # Templates selection page
+├── test-netlify.html       # Test page for debugging
 ├── netlify-functions/       # Serverless functions
-│   ├── clubzila-auth.js    # Clubzila authentication function
-│   └── package.json        # Function dependencies
+│   └── clubzila-auth.js    # Clubzila authentication function (no dependencies)
 ├── netlify.toml            # Netlify configuration
 └── NETLIFY_DEPLOYMENT.md   # This file
 ```
@@ -48,22 +48,13 @@ In your Netlify dashboard:
    CLUBZILA_API_URL=https://clubzila.com
    ```
 
-### 3. Install Function Dependencies
+### 3. Test the Function
 
-After deployment, you need to install the function dependencies:
-
-1. Go to your Netlify dashboard
-2. Navigate to Functions tab
-3. Click on "clubzila-auth" function
-4. In the function editor, you'll see a "Install dependencies" button
-5. Click it to install axios
-
-Alternatively, you can do this via CLI:
-```bash
-cd netlify-functions
-npm install
-netlify deploy --prod
-```
+After deployment:
+1. Visit your Netlify site
+2. Go to `/test-netlify.html`
+3. Enter a phone number and test the function
+4. Check the console for detailed logs
 
 ## 🔍 How It Works
 
@@ -75,9 +66,10 @@ The authentication page automatically detects if it's running on Netlify:
 ### Serverless Function
 The `clubzila-auth.js` function:
 1. Receives authentication requests
-2. Handles CSRF token retrieval
+2. Handles CSRF token retrieval (using native fetch)
 3. Registers users with Clubzila
 4. Returns authentication results
+5. **No external dependencies required** - uses native Node.js fetch
 
 ## 🧪 Testing
 
@@ -95,8 +87,9 @@ curl -X POST http://localhost:3002/api/clubzila/authenticate \
 ### Netlify Testing
 1. Deploy to Netlify
 2. Visit your site URL
-3. Go to `/auth.html`
+3. Go to `/test-netlify.html`
 4. Test authentication with a phone number
+5. Check browser console for detailed logs
 
 ## 🔧 Troubleshooting
 
@@ -107,9 +100,10 @@ curl -X POST http://localhost:3002/api/clubzila/authenticate \
 - Check that `clubzila-auth.js` is in the functions directory
 - Verify `netlify.toml` configuration
 
-#### 2. "Module not found" Error
-- Install dependencies in the functions directory
-- Ensure `axios` is listed in `package.json`
+#### 2. "Network error" on Authentication
+- Check Netlify function logs
+- Verify the function is properly deployed
+- Test with `/test-netlify.html` first
 
 #### 3. CORS Errors
 - The function includes CORS headers
@@ -139,6 +133,13 @@ curl -X POST http://localhost:8888/.netlify/functions/clubzila-auth \
   -d '{"phone_number":"0754546567"}'
 ```
 
+#### Use Test Page
+The `test-netlify.html` page provides:
+- Environment detection
+- Function URL display
+- Detailed error reporting
+- Console logging
+
 ## 📝 Environment Variables
 
 | Variable | Description | Default |
@@ -152,10 +153,34 @@ To update the deployment:
 2. Netlify will automatically redeploy
 3. Check function logs for any issues
 
+## 🆕 What's New
+
+### Simplified Function (v2.0)
+- ✅ **No external dependencies** - uses native Node.js fetch
+- ✅ **Faster deployment** - no npm install needed
+- ✅ **Better error handling** - detailed logging
+- ✅ **Test page included** - easy debugging
+
+### Key Improvements
+- Removed axios dependency
+- Added comprehensive error handling
+- Included test page for debugging
+- Better CORS support
+
 ## 📞 Support
 
 If you encounter issues:
-1. Check the function logs in Netlify dashboard
-2. Verify all files are properly deployed
-3. Test the function locally first
+1. **First**: Test with `/test-netlify.html`
+2. Check the function logs in Netlify dashboard
+3. Verify all files are properly deployed
 4. Check environment variables are set correctly
+5. Test the function locally with `netlify dev`
+
+## 🚨 Emergency Fix
+
+If authentication still fails:
+1. Go to Netlify dashboard → Functions
+2. Click on `clubzila-auth` function
+3. Check the logs for specific errors
+4. Verify the function is deployed and accessible
+5. Test with the test page first

@@ -1,6 +1,4 @@
-const axios = require('axios');
-
-// Clubzila Integration for Netlify Functions
+// Simplified Clubzila Integration for Netlify Functions (No external dependencies)
 class ClubzilaIntegration {
     constructor() {
         this.apiUrl = process.env.CLUBZILA_API_URL || 'https://clubzila.com';
@@ -10,19 +8,19 @@ class ClubzilaIntegration {
 
     async getCsrfToken() {
         try {
-            const response = await axios.get(`${this.apiUrl}/signup`, {
-                timeout: this.timeout,
+            const response = await fetch(`${this.apiUrl}/signup`, {
+                method: 'GET',
                 headers: {
                     'User-Agent': 'Mozilla/5.0 (compatible; ClubzilaBot/1.0)',
                     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
                 }
             });
             
-            if (response.headers['set-cookie']) {
-                this.sessionCookies = response.headers['set-cookie'];
+            if (response.headers.get('set-cookie')) {
+                this.sessionCookies = response.headers.get('set-cookie').split(',');
             }
             
-            const html = response.data;
+            const html = await response.text();
             const tokenMatch = html.match(/name="_token" value="([^"]*)"/);
             const token = tokenMatch ? tokenMatch[1] : null;
             
@@ -42,8 +40,8 @@ class ClubzilaIntegration {
         try {
             console.log(`Authenticating user: ${phoneNumber}`);
             
-            // For now, we'll skip user check and go straight to registration
-            // since the /funnel/get-user endpoint returns 404
+            // Skip user check since /funnel/get-user returns 404
+            // Go straight to registration
             const registration = await this.registerUser({
                 phone_number: phoneNumber,
                 name: userData.name || `User_${phoneNumber}`,
@@ -117,23 +115,33 @@ class ClubzilaIntegration {
             formData.append('agree_gdpr', 'on');
             formData.append('_token', csrfToken);
             
-            const response = await axios.post(`${this.apiUrl}/signup`, formData, {
-                timeout: this.timeout,
-                headers: headers
+            const response = await fetch(`${this.apiUrl}/signup`, {
+                method: 'POST',
+                headers: headers,
+                body: formData.toString()
             });
 
             console.log(`User registration sent to Clubzila`);
             console.log('Response status:', response.status);
-            console.log('Response data:', response.data);
 
-            const isRegistrationComplete = response.data?.success === true && response.data?.isLoginRegister === true;
+            const responseData = await response.text();
+            let parsedData;
+            try {
+                parsedData = JSON.parse(responseData);
+            } catch (e) {
+                parsedData = { success: false, message: 'Invalid response format' };
+            }
+
+            console.log('Response data:', parsedData);
+
+            const isRegistrationComplete = parsedData?.success === true && parsedData?.isLoginRegister === true;
             
             return {
                 success: true,
                 message: isRegistrationComplete ? 'User registered successfully - Active in Clubzila' : 'User registration completed',
                 data: {
-                    user_id: response.data?.id || response.data?.user?.id || `user_${Date.now()}`,
-                    auth_id: response.data?.auth_id || `auth_${Date.now()}`,
+                    user_id: parsedData?.id || parsedData?.user?.id || `user_${Date.now()}`,
+                    auth_id: parsedData?.auth_id || `auth_${Date.now()}`,
                     user_data: {
                         phone_number: userData.phone_number,
                         name: userData.name || `User_${formattedPhone}`,
@@ -150,17 +158,13 @@ class ClubzilaIntegration {
         } catch (error) {
             console.error('Clubzila user registration failed:', {
                 phone: userData.phone_number,
-                status: error.response?.status,
-                statusText: error.response?.statusText,
-                data: error.response?.data,
                 error: error.message
             });
 
             return {
                 success: false,
                 message: 'User registration failed',
-                error: error.message,
-                details: error.response?.data
+                error: error.message
             };
         }
     }
