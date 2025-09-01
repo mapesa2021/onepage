@@ -271,87 +271,56 @@ app.get('/health', (req, res) => {
 const clubzilaIntegration = new ClubzilaIntegration();
 
 // Clubzila Authentication Endpoints
-app.post('/api/clubzila/authenticate', async (req, res) => {
+app.post('/api/clubzila/request-login-otp', async (req, res) => {
     try {
-        const { phone_number, name, email, password, countryCode } = req.body;
+        const { phone } = req.body;
         
-        if (!phone_number) {
-            return res.status(400).json({
+        // Validate phone number
+        if (!phone || !phone.match(/^[0-9+\-\s()]+$/)) {
+            return res.status(422).json({
                 success: false,
-                message: 'Phone number is required'
+                message: 'Validation failed',
+                errors: { phone: ['Invalid phone number format'] }
             });
         }
 
-        console.log(`🔐 Authenticating user: ${phone_number}`);
+        // Normalize phone number
+        const normalizedPhone = normalizePhoneNumber(phone);
+        console.log(`📱 Login OTP request for: ${normalizedPhone}`);
         
-        // Use the new authenticateUser method (adapted to Clubzila's flow)
-        const result = await clubzilaIntegration.authenticateUser(phone_number, {
-            name,
-            email,
-            password,
-            countryCode
-        });
+        // Check if user exists (in demo mode, we'll simulate this)
+        // In real implementation, check database
+        const userExists = true; // Demo mode: assume user exists
+        
+        if (!userExists) {
+            return res.status(404).json({
+                success: false,
+                message: 'No account found with this phone number. Please register first.'
+            });
+        }
 
+        // Request OTP from Clubzila
+        const result = await clubzilaIntegration.requestOtp(normalizedPhone);
+        
         if (result.success) {
-            res.json({
+            // Store phone in cache for verification (5 minutes)
+            const cacheKey = `login_phone_${normalizedPhone}`;
+            // In production, use Redis or database for caching
+            console.log(`💾 Caching login phone: ${cacheKey}`);
+            
+            return res.json({
                 success: true,
-                message: result.message,
-                data: {
-                    user: result.user,
-                    requiresOtp: result.requiresOtp,
-                    isActive: result.isActive,
-                    isNewUser: result.isNewUser
-                }
-            });
-        } else {
-            res.status(400).json({
-                success: false,
-                message: result.message,
-                error: result.error
+                message: 'OTP sent successfully to your phone number',
+                phone: maskPhoneNumber(normalizedPhone)
             });
         }
-    } catch (error) {
-        console.error('❌ Authentication error:', error);
-        res.status(500).json({
+
+        return res.status(500).json({
             success: false,
-            message: 'Authentication failed',
-            error: error.message
+            message: result.message || 'Failed to send OTP'
         });
-    }
-});
-
-// Legacy OTP endpoints (kept for backward compatibility)
-app.post('/api/clubzila/request-otp', async (req, res) => {
-    try {
-        const { phone_number } = req.body;
-        
-        if (!phone_number) {
-            return res.status(400).json({
-                success: false,
-                message: 'Phone number is required'
-            });
-        }
-
-        console.log(`📱 Requesting OTP for: ${phone_number}`);
-        
-        // Use the proper Clubzila OTP endpoint
-        const result = await clubzilaIntegration.requestOtp(phone_number);
-        
-        if (result.success) {
-            res.json({
-                success: true,
-                message: result.message,
-                data: result.data
-            });
-        } else {
-            res.status(400).json({
-                success: false,
-                message: result.message,
-                error: result.error
-            });
-        }
     } catch (error) {
-        console.error('❌ OTP request error:', error);
+        console.error('❌ Login OTP request error:', error);
         res.status(500).json({
             success: false,
             message: 'OTP request failed',
@@ -360,37 +329,126 @@ app.post('/api/clubzila/request-otp', async (req, res) => {
     }
 });
 
-app.post('/api/clubzila/verify-otp', async (req, res) => {
+app.post('/api/clubzila/request-register-otp', async (req, res) => {
     try {
-        const { phone_number, otp } = req.body;
+        const { phone, name } = req.body;
         
-        if (!phone_number || !otp) {
-            return res.status(400).json({
+        // Validate required fields
+        if (!phone || !phone.match(/^[0-9+\-\s()]+$/)) {
+            return res.status(422).json({
                 success: false,
-                message: 'Phone number and OTP are required'
+                message: 'Validation failed',
+                errors: { phone: ['Invalid phone number format'] }
+            });
+        }
+        
+        if (!name || name.trim().length === 0) {
+            return res.status(422).json({
+                success: false,
+                message: 'Validation failed',
+                errors: { name: ['Name is required'] }
             });
         }
 
-        console.log(`🔐 Verifying OTP for: ${phone_number}`);
+        // Normalize phone number
+        const normalizedPhone = normalizePhoneNumber(phone);
+        console.log(`📱 Registration OTP request for: ${normalizedPhone}`);
         
-        // Use the proper Clubzila OTP verification endpoint
-        const result = await clubzilaIntegration.verifyOtp(phone_number, otp);
+        // Check if user already exists (in demo mode, we'll simulate this)
+        // In real implementation, check database
+        const existingUser = false; // Demo mode: assume no existing user
         
-        if (result.success) {
-            res.json({
-                success: true,
-                message: result.message,
-                data: result.data
-            });
-        } else {
-            res.status(400).json({
+        if (existingUser) {
+            return res.status(409).json({
                 success: false,
-                message: result.message,
-                error: result.error
+                message: 'An account with this phone number already exists. Please login instead.'
             });
         }
+
+        // Request OTP from Clubzila
+        const result = await clubzilaIntegration.requestOtp(normalizedPhone);
+        
+        if (result.success) {
+            // Store registration data in cache (5 minutes)
+            const cacheKey = `register_data_${normalizedPhone}`;
+            const registerData = {
+                phone: normalizedPhone,
+                name: name.trim(),
+                timestamp: Date.now()
+            };
+            // In production, use Redis or database for caching
+            console.log(`💾 Caching registration data: ${cacheKey}`, registerData);
+            
+            return res.json({
+                success: true,
+                message: 'OTP sent successfully to your phone number',
+                phone: maskPhoneNumber(normalizedPhone)
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: result.message || 'Failed to send OTP'
+        });
     } catch (error) {
-        console.error('❌ OTP verification error:', error);
+        console.error('❌ Registration OTP request error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'OTP request failed',
+            error: error.message
+        });
+    }
+});
+
+app.post('/api/clubzila/verify-login-otp', async (req, res) => {
+    try {
+        const { phone, otp } = req.body;
+        
+        // Validate required fields
+        if (!phone || !otp || otp.length !== 6) {
+            return res.status(422).json({
+                success: false,
+                message: 'Validation failed',
+                errors: { 
+                    phone: phone ? undefined : ['Phone number is required'],
+                    otp: otp ? (otp.length !== 6 ? ['OTP must be 6 digits'] : undefined) : ['OTP is required']
+                }
+            });
+        }
+
+        const normalizedPhone = normalizePhoneNumber(phone);
+        console.log(`🔐 Login OTP verification for: ${normalizedPhone}`);
+        
+        // Verify OTP with Clubzila
+        const result = await clubzilaIntegration.verifyOtp(normalizedPhone, otp);
+        
+        if (!result.success) {
+            return res.status(422).json({
+                success: false,
+                message: result.message || 'Invalid OTP'
+            });
+        }
+
+        // In demo mode, simulate successful login
+        // In real implementation, get user from database and create session
+        const user = {
+            id: result.data.user_id || `user_${Date.now()}`,
+            name: `User_${normalizedPhone}`,
+            phone: normalizedPhone,
+            role: 'creator'
+        };
+
+        // Clear cache
+        const cacheKey = `login_phone_${normalizedPhone}`;
+        console.log(`🗑️ Clearing cache: ${cacheKey}`);
+
+        return res.json({
+            success: true,
+            message: 'Login successful',
+            user: user
+        });
+    } catch (error) {
+        console.error('❌ Login OTP verification error:', error);
         res.status(500).json({
             success: false,
             message: 'OTP verification failed',
@@ -398,6 +456,170 @@ app.post('/api/clubzila/verify-otp', async (req, res) => {
         });
     }
 });
+
+app.post('/api/clubzila/verify-register-otp', async (req, res) => {
+    try {
+        const { phone, otp } = req.body;
+        
+        // Validate required fields
+        if (!phone || !otp || otp.length !== 6) {
+            return res.status(422).json({
+                success: false,
+                message: 'Validation failed',
+                errors: { 
+                    phone: phone ? undefined : ['Phone number is required'],
+                    otp: otp ? (otp.length !== 6 ? ['OTP must be 6 digits'] : undefined) : ['OTP is required']
+                }
+            });
+        }
+
+        const normalizedPhone = normalizePhoneNumber(phone);
+        console.log(`🔐 Registration OTP verification for: ${normalizedPhone}`);
+        
+        // Get registration data from cache
+        const cacheKey = `register_data_${normalizedPhone}`;
+        // In production, use Redis or database for caching
+        const registerData = {
+            phone: normalizedPhone,
+            name: `User_${normalizedPhone}`,
+            timestamp: Date.now()
+        };
+        
+        if (!registerData) {
+            return res.status(422).json({
+                success: false,
+                message: 'Registration session expired. Please try again.'
+            });
+        }
+
+        // Verify OTP with Clubzila
+        const result = await clubzilaIntegration.verifyOtp(normalizedPhone, otp);
+        
+        if (!result.success) {
+            return res.status(422).json({
+                success: false,
+                message: result.message || 'Invalid OTP'
+            });
+        }
+
+        // In demo mode, simulate successful registration
+        // In real implementation, create user in database
+        const user = {
+            id: result.data.user_id || `user_${Date.now()}`,
+            name: registerData.name,
+            phone: normalizedPhone,
+            role: 'creator',
+            status: 'active',
+            clubzila_id: result.data.user_id || null,
+            metadata: {
+                registered_via: 'otp',
+                registration_date: new Date().toISOString(),
+                clubzila_data: result.data || []
+            }
+        };
+
+        // Clear cache
+        console.log(`🗑️ Clearing cache: ${cacheKey}`);
+
+        return res.json({
+            success: true,
+            message: 'Registration successful',
+            user: user
+        });
+    } catch (error) {
+        console.error('❌ Registration OTP verification error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'OTP verification failed',
+            error: error.message
+        });
+    }
+});
+
+app.post('/api/clubzila/resend-otp', async (req, res) => {
+    try {
+        const { phone, type } = req.body;
+        
+        // Validate required fields
+        if (!phone || !type || !['login', 'register'].includes(type)) {
+            return res.status(422).json({
+                success: false,
+                message: 'Validation failed',
+                errors: { 
+                    phone: phone ? undefined : ['Phone number is required'],
+                    type: type ? (['login', 'register'].includes(type) ? undefined : ['Type must be login or register']) : ['Type is required']
+                }
+            });
+        }
+
+        const normalizedPhone = normalizePhoneNumber(phone);
+        console.log(`📱 Resending OTP for: ${normalizedPhone} (${type})`);
+        
+        // Check rate limiting (1 minute)
+        const rateLimitKey = `otp_rate_limit_${normalizedPhone}`;
+        // In production, use Redis or database for rate limiting
+        console.log(`⏱️ Rate limiting check: ${rateLimitKey}`);
+        
+        // Request new OTP
+        const result = await clubzilaIntegration.requestOtp(normalizedPhone);
+        
+        if (result.success) {
+            // Set rate limiting (1 minute)
+            console.log(`⏱️ Setting rate limit: ${rateLimitKey}`);
+            
+            // Update cache data based on type
+            if (type === 'login') {
+                const cacheKey = `login_phone_${normalizedPhone}`;
+                console.log(`💾 Updating login cache: ${cacheKey}`);
+            } else {
+                const cacheKey = `register_data_${normalizedPhone}`;
+                console.log(`💾 Updating registration cache: ${cacheKey}`);
+            }
+
+            return res.json({
+                success: true,
+                message: 'OTP resent successfully',
+                phone: maskPhoneNumber(normalizedPhone)
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: result.message || 'Failed to resend OTP'
+        });
+    } catch (error) {
+        console.error('❌ OTP resend error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'OTP resend failed',
+            error: error.message
+        });
+    }
+});
+
+// Helper functions
+function normalizePhoneNumber(phone) {
+    // Remove all non-digit characters except +
+    let normalized = phone.replace(/[^\d+]/g, '');
+    
+    // Ensure it starts with + if it's an international number
+    if (!normalized.startsWith('+') && normalized.length > 10) {
+        normalized = '+' + normalized;
+    }
+    
+    return normalized;
+}
+
+function maskPhoneNumber(phone) {
+    if (phone.length <= 4) {
+        return phone;
+    }
+    
+    const visible = phone.slice(-4);
+    const masked = '*'.repeat(phone.length - 4);
+    
+    return masked + visible;
+}
 
 // Clubzila User Management Endpoints
 app.post('/api/clubzila/get-user', async (req, res) => {

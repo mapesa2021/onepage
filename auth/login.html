@@ -292,17 +292,29 @@
             setLoading(submitBtn, true);
             
             try {
-                const response = await fetch('/api/clubzila/request-otp', {
+                console.log('🔍 Sending login OTP request to:', '/api/clubzila/request-login-otp');
+                console.log('📱 Phone number:', `255${phone}`);
+                
+                const response = await fetch('/api/clubzila/request-login-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        phone_number: `255${phone}`
+                        phone: `255${phone}`
                     })
                 });
                 
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                console.log('📋 Response data:', result);
                 
                 if (result.success) {
                     userPhone = phone;
@@ -313,7 +325,10 @@
                     showError('OTP Request Failed', result.message || 'Failed to send OTP. Please try again.');
                 }
             } catch (error) {
-                showError('Network Error', 'Please check your connection and try again.');
+                console.error('❌ OTP request error details:', error);
+                console.error('❌ OTP request error message:', error.message);
+                console.error('❌ OTP request error stack:', error.stack);
+                showError('Network Error', `Please check your connection and try again. Error: ${error.message}`);
             } finally {
                 setLoading(submitBtn, false);
             }
@@ -335,27 +350,40 @@
             setLoading(submitBtn, true);
             
             try {
-                const response = await fetch('/api/clubzila/verify-otp', {
+                console.log('🔍 Verifying login OTP for phone:', `255${userPhone}`);
+                console.log('🔐 OTP code:', otp);
+                
+                const response = await fetch('/api/clubzila/verify-login-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        phone_number: `255${userPhone}`,
+                        phone: `255${userPhone}`,
                         otp: otp
                     })
                 });
                 
+                console.log('📡 OTP verification response status:', response.status);
+                console.log('📡 OTP verification response ok:', response.ok);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                console.log('📋 OTP verification result:', result);
                 
                 if (result.success) {
                     // Store user data in session/localStorage
                     localStorage.setItem('user', JSON.stringify({
                         phone: userPhone,
-                        userId: result.data.user_id || `user_${Date.now()}`,
-                        authId: result.data.auth_id || `auth_${Date.now()}`,
+                        userId: result.user.id || `user_${Date.now()}`,
+                        authId: result.user.id || `auth_${Date.now()}`,
                         isAuthenticated: true,
-                        timestamp: Date.now()
+                        timestamp: Date.now(),
+                        userData: result.user
                     }));
                     
                     showStep(3);
@@ -368,7 +396,10 @@
                     showError('Authentication Failed', result.message || 'Invalid OTP. Please try again.');
                 }
             } catch (error) {
-                showError('Network Error', 'Please check your connection and try again.');
+                console.error('❌ OTP verification error details:', error);
+                console.error('❌ OTP verification error message:', error.message);
+                console.error('❌ OTP verification error stack:', error.stack);
+                showError('Network Error', `Please check your connection and try again. Error: ${error.message}`);
             } finally {
                 setLoading(submitBtn, false);
             }
@@ -382,15 +413,21 @@
             const resendBtn = document.getElementById('resendOtp');
             
             try {
-                const response = await fetch('/api/clubzila/request-otp', {
+                const response = await fetch('/api/clubzila/resend-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        phone_number: `255${userPhone}`
+                        phone: `255${userPhone}`,
+                        type: 'login'
                     })
                 });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
                 
                 const result = await response.json();
                 
@@ -402,7 +439,7 @@
                     showError('Resend Failed', result.message || 'Failed to resend OTP. Please try again.');
                 }
             } catch (error) {
-                showError('Network Error', 'Please check your connection and try again.');
+                showError('Network Error', `Please check your connection and try again. Error: ${error.message}`);
             }
         });
 
