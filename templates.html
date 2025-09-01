@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page Templates - Clubzila Integration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .template-card {
+            transition: all 0.3s ease;
+        }
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Header -->
+    <header class="glass-effect border-b border-white/20">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <h1 class="text-2xl font-bold text-white">Landing Page Templates</h1>
+                    <span class="px-3 py-1 bg-green-500 text-white text-sm rounded-full">Authenticated</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span id="userPhone" class="text-white/80"></span>
+                    <button onclick="logout()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold text-white mb-4">Choose Your Landing Page Template</h2>
+            <p class="text-white/80 text-lg max-w-2xl mx-auto">
+                Select from our collection of fast-loading, responsive landing page templates. 
+                Each template is optimized for performance and conversion.
+            </p>
+        </div>
+
+        <!-- Templates Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Template 1 -->
+            <div class="template-card glass-effect rounded-2xl p-6 cursor-pointer" onclick="selectTemplate('template-1')">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <span class="text-white text-2xl font-bold">1</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Modern Business</h3>
+                    <p class="text-white/70 text-sm">Professional business landing page with clean design</p>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        Fast loading
+                    </div>
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        Mobile responsive
+                    </div>
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        SEO optimized
+                    </div>
+                </div>
+                <button class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
+                    Select Template
+                </button>
+            </div>
+
+            <!-- Template 2 -->
+            <div class="template-card glass-effect rounded-2xl p-6 cursor-pointer" onclick="selectTemplate('template-2')">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <span class="text-white text-2xl font-bold">2</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Creative Portfolio</h3>
+                    <p class="text-white/70 text-sm">Creative and artistic portfolio showcase template</p>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        Visual focus
+                    </div>
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        Gallery support
+                    </div>
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        Smooth animations
+                    </div>
+                </div>
+                <button class="w-full bg-purple-500 text-white py-3 px-6 rounded-lg hover:bg-purple-600 transition duration-300">
+                    Select Template
+                </button>
+            </div>
+
+            <!-- Template 3 -->
+            <div class="template-card glass-effect rounded-2xl p-6 cursor-pointer" onclick="selectTemplate('template-3')">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <span class="text-white text-2xl font-bold">3</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">E-commerce</h3>
+                    <p class="text-white/70 text-sm">Product-focused e-commerce landing page</p>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        Product showcase
+                    </div>
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        Payment integration
+                    </div>
+                    <div class="flex items-center text-white/80 text-sm">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-3"></span>
+                        Shopping cart
+                    </div>
+                </div>
+                <button class="w-full bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition duration-300">
+                    Select Template
+                </button>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="glass-effect rounded-2xl p-8 mb-12">
+            <h3 class="text-2xl font-bold text-white text-center mb-8">Why Choose Our Templates?</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-white mb-2">Lightning Fast</h4>
+                    <p class="text-white/70">Optimized for speed with minimal load times</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-white mb-2">Mobile First</h4>
+                    <p class="text-white/70">Responsive design that works on all devices</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-500 rounded-full mx-auto mb-4 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold text-white mb-2">SEO Ready</h4>
+                    <p class="text-white/70">Built with search engine optimization in mind</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Selected Template Display -->
+        <div id="selectedTemplate" class="hidden glass-effect rounded-2xl p-8">
+            <h3 class="text-2xl font-bold text-white mb-6">Selected Template: <span id="templateName"></span></h3>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Template Preview</h4>
+                    <div class="bg-white/10 rounded-lg p-4 h-64 flex items-center justify-center">
+                        <p class="text-white/60 text-center">Template preview will be displayed here</p>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Customization Options</h4>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-white text-sm font-medium mb-2">Site Title</label>
+                            <input type="text" id="siteTitle" class="w-full px-3 py-2 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60">
+                        </div>
+                        <div>
+                            <label class="block text-white text-sm font-medium mb-2">Primary Color</label>
+                            <input type="color" id="primaryColor" value="#20c4cb" class="w-full h-12 rounded-lg border border-white/30">
+                        </div>
+                        <div>
+                            <label class="block text-white text-sm font-medium mb-2">Logo URL</label>
+                            <input type="url" id="logoUrl" class="w-full px-3 py-2 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/60">
+                        </div>
+                    </div>
+                    <div class="mt-6 space-y-3">
+                        <button onclick="previewTemplate()" class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition duration-300">
+                            Preview Template
+                        </button>
+                        <button onclick="publishTemplate()" class="w-full bg-green-500 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition duration-300">
+                            Publish Template
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-effect border-t border-white/20 mt-12">
+        <div class="container mx-auto px-4 py-6">
+            <div class="text-center text-white/60">
+                <p>&copy; 2024 Clubzila Integration. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let currentUser = null;
+        let selectedTemplate = null;
+
+        // Check authentication on page load
+        window.addEventListener('load', function() {
+            checkAuthentication();
+        });
+
+        function checkAuthentication() {
+            const storedUser = localStorage.getItem('clubzila_user');
+            if (!storedUser) {
+                // Not authenticated, redirect to auth page
+                window.location.href = '/auth.html';
+                return;
+            }
+
+            try {
+                const userData = JSON.parse(storedUser);
+                const authTime = new Date(userData.authenticated_at);
+                const now = new Date();
+                const hoursDiff = (now - authTime) / (1000 * 60 * 60);
+                
+                // If authenticated within last 24 hours, show user info
+                if (hoursDiff < 24) {
+                    currentUser = userData.user;
+                    document.getElementById('userPhone').textContent = `Phone: ${currentUser.phone_number}`;
+                } else {
+                    // Session expired, redirect to auth
+                    localStorage.removeItem('clubzila_user');
+                    window.location.href = '/auth.html';
+                }
+            } catch (error) {
+                localStorage.removeItem('clubzila_user');
+                window.location.href = '/auth.html';
+            }
+        }
+
+        function selectTemplate(templateId) {
+            selectedTemplate = templateId;
+            
+            // Update template name display
+            const templateNames = {
+                'template-1': 'Modern Business',
+                'template-2': 'Creative Portfolio',
+                'template-3': 'E-commerce'
+            };
+            document.getElementById('templateName').textContent = templateNames[templateId];
+            
+            // Show selected template section
+            document.getElementById('selectedTemplate').classList.remove('hidden');
+            
+            // Scroll to selected template section
+            document.getElementById('selectedTemplate').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function previewTemplate() {
+            if (!selectedTemplate) {
+                alert('Please select a template first');
+                return;
+            }
+            
+            // Get customization values
+            const siteTitle = document.getElementById('siteTitle').value || 'My Landing Page';
+            const primaryColor = document.getElementById('primaryColor').value;
+            const logoUrl = document.getElementById('logoUrl').value;
+            
+            // Store customization data
+            const customization = {
+                template: selectedTemplate,
+                siteTitle,
+                primaryColor,
+                logoUrl,
+                timestamp: new Date().toISOString()
+            };
+            
+            localStorage.setItem('template_customization', JSON.stringify(customization));
+            
+            // Open preview in new tab
+            window.open(`/${selectedTemplate}.html`, '_blank');
+        }
+
+        function publishTemplate() {
+            if (!selectedTemplate) {
+                alert('Please select a template first');
+                return;
+            }
+            
+            const customization = localStorage.getItem('template_customization');
+            if (!customization) {
+                alert('Please preview the template first');
+                return;
+            }
+            
+            // Here you would typically send the data to your backend
+            // For now, we'll just show a success message
+            alert('Template published successfully! Your landing page is now live.');
+            
+            // You could redirect to the published page or show a success screen
+            console.log('Template published:', JSON.parse(customization));
+        }
+
+        function logout() {
+            // Clear user session
+            localStorage.removeItem('clubzila_user');
+            localStorage.removeItem('template_customization');
+            
+            // Redirect to auth page
+            window.location.href = '/auth.html';
+        }
+    </script>
+</body>
+</html>
