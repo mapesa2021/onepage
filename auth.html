@@ -154,14 +154,13 @@
             hideError();
 
             try {
-                const response = await fetch('/.netlify/functions/clubzila-auth', {
+                const response = await fetch('/api/clubzila/request-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        phone_number: phoneNumber,
-                        action: 'request-otp'
+                        phone_number: phoneNumber
                     })
                 });
 
@@ -170,8 +169,7 @@
 
                 if (result.success) {
                     currentPhoneNumber = phoneNumber;
-                    isNewUser = result.isNewUser;
-                    showOTPStep(result.message, result.isNewUser);
+                    showOTPStep(result.message);
                 } else {
                     showError(result.message || 'Failed to request OTP');
                 }
@@ -182,20 +180,15 @@
             }
         }
 
-        function showOTPStep(message, isNewUser) {
+        function showOTPStep(message) {
             document.getElementById('step1').classList.add('hidden');
             document.getElementById('step2').classList.remove('hidden');
             
             const otpMessage = document.getElementById('otpMessage');
             const otpHint = document.getElementById('otpHint');
             
-            if (isNewUser) {
-                otpMessage.textContent = `OTP sent for new user registration`;
-                otpHint.textContent = `Check your SMS for the verification code`;
-            } else {
-                otpMessage.textContent = `OTP sent for existing user login`;
-                otpHint.textContent = `Check your SMS for the verification code`;
-            }
+            otpMessage.textContent = `OTP sent successfully`;
+            otpHint.textContent = `Check your SMS for the verification code`;
         }
 
         async function verifyOTP() {
@@ -215,18 +208,13 @@
             hideError();
 
             try {
-                const response = await fetch('/.netlify/functions/clubzila-auth', {
+                const response = await fetch('/api/clubzila/verify-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         phone_number: currentPhoneNumber,
-                        name: `User_${currentPhoneNumber}`,
-                        email: `${currentPhoneNumber}@clubzila.com`,
-                        password: currentPhoneNumber,
-                        countryCode: '255',
-                        action: 'authenticate',
                         otp: otp
                     })
                 });
@@ -237,7 +225,7 @@
                 if (result.success) {
                     // Store user data
                     localStorage.setItem('clubzila_user', JSON.stringify({
-                        user: result.user,
+                        user: result.data,
                         timestamp: Date.now()
                     }));
                     

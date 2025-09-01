@@ -28,17 +28,25 @@ class ClubzilaIntegration {
         this.sessionCookies = [];
         
         // Demo mode - use mock responses since real API endpoints are not accessible
-        this.demoMode = false; // Force real API mode
+        this.demoMode = true; // Enable demo mode for development
         
-        if (!this.demoMode) {
+        if (this.demoMode) {
+            console.log('🎭 DEMO MODE: Using mock responses for development');
+        } else {
             console.log('✅ Using REAL Clubzila API endpoints');
         }
         
         console.log('🚀 Clubzila Integration initialized');
         console.log(`📡 Base URL: ${this.apiUrl}`);
-        console.log('✅ Using REAL Clubzila API endpoints');
-        console.log('📝 Using web form endpoints for real integration');
-        console.log('🎯 Adapted to Clubzila\'s actual flow: Registration → Active User');
+        
+        if (this.demoMode) {
+            console.log('🎭 DEMO MODE: Real API endpoints not accessible, using mock responses');
+            console.log('💡 Demo OTP is always: 123456');
+        } else {
+            console.log('✅ Using REAL Clubzila API endpoints');
+            console.log('📝 Using web form endpoints for real integration');
+            console.log('🎯 Adapted to Clubzila\'s actual flow: Registration → Active User');
+        }
     }
 
     /**

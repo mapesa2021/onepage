@@ -304,7 +304,7 @@
                 
                 const result = await response.json();
                 
-                if (result.status === 'success') {
+                if (result.success) {
                     userPhone = phone;
                     document.getElementById('phoneDisplay').textContent = `+255 ${phone}`;
                     showStep(2);
@@ -335,7 +335,7 @@
             setLoading(submitBtn, true);
             
             try {
-                const response = await fetch('/api/clubzila/authenticate', {
+                const response = await fetch('/api/clubzila/verify-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -348,12 +348,12 @@
                 
                 const result = await response.json();
                 
-                if (result.status === 'success') {
+                if (result.success) {
                     // Store user data in session/localStorage
                     localStorage.setItem('user', JSON.stringify({
                         phone: userPhone,
-                        userId: result.data.user_id,
-                        authId: result.data.auth_id,
+                        userId: result.data.user_id || `user_${Date.now()}`,
+                        authId: result.data.auth_id || `auth_${Date.now()}`,
                         isAuthenticated: true,
                         timestamp: Date.now()
                     }));
@@ -394,7 +394,7 @@
                 
                 const result = await response.json();
                 
-                if (result.status === 'success') {
+                if (result.success) {
                     startCountdown();
                     showError('OTP Sent', 'A new OTP has been sent to your phone number.');
                     setTimeout(() => hideError(), 3000);

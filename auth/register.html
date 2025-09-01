@@ -432,7 +432,7 @@
                 
                 const result = await response.json();
                 
-                if (result.status === 'success') {
+                if (result.success) {
                     userPhone = phone;
                     document.getElementById('phoneDisplay').textContent = `+255 ${phone}`;
                     showStep(2);
@@ -476,7 +476,7 @@
                 
                 const result = await response.json();
                 
-                if (result.status === 'success') {
+                if (result.success) {
                     userOtp = otp;
                     showStep(3);
                 } else {
@@ -517,17 +517,18 @@
             setLoading(submitBtn, true);
             
             try {
-                const response = await fetch('/api/clubzila/register', {
+                // Use the authenticate endpoint to complete registration with user details
+                const response = await fetch('/api/clubzila/authenticate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         phone_number: `255${userPhone}`,
-                        otp: userOtp,
-                        first_name: firstName,
-                        last_name: lastName,
+                        name: `${firstName} ${lastName}`,
                         email: email,
+                        password: userPhone,
+                        countryCode: '255',
                         business_name: formData.get('businessName') || '',
                         business_type: businessType
                     })
@@ -535,19 +536,20 @@
                 
                 const result = await response.json();
                 
-                if (result.status === 'success') {
+                if (result.success) {
                     // Store user data in session/localStorage
                     localStorage.setItem('user', JSON.stringify({
                         phone: userPhone,
-                        userId: result.data.user_id,
-                        authId: result.data.auth_id,
+                        userId: result.data.user?.user_id || `user_${Date.now()}`,
+                        authId: result.data.user?.auth_id || `auth_${Date.now()}`,
                         firstName: firstName,
                         lastName: lastName,
                         email: email,
                         businessName: formData.get('businessName') || '',
                         businessType: businessType,
                         isAuthenticated: true,
-                        timestamp: Date.now()
+                        timestamp: Date.now(),
+                        isNewUser: result.data.isNewUser || false
                     }));
                     
                     showStep(4);
@@ -586,7 +588,7 @@
                 
                 const result = await response.json();
                 
-                if (result.status === 'success') {
+                if (result.success) {
                     startCountdown();
                     showError('OTP Sent', 'A new OTP has been sent to your phone number.');
                     setTimeout(() => hideError(), 3000);

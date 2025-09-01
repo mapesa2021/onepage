@@ -332,21 +332,24 @@ app.post('/api/clubzila/request-otp', async (req, res) => {
             });
         }
 
-        console.log(`⚠️ Legacy OTP request for: ${phone_number}`);
-        console.log('💡 This endpoint is deprecated - use /api/clubzila/authenticate instead');
+        console.log(`📱 Requesting OTP for: ${phone_number}`);
         
-        // Return information about the new flow
-        res.json({
-            success: true,
-            message: 'OTP not required - Clubzila uses immediate activation',
-            data: {
-                message: 'Use /api/clubzila/authenticate for proper authentication',
-                phone_number: phone_number,
-                requires_otp: false,
-                clubzila_flow: true,
-                deprecated: true
-            }
-        });
+        // Use the proper Clubzila OTP endpoint
+        const result = await clubzilaIntegration.requestOtp(phone_number);
+        
+        if (result.success) {
+            res.json({
+                success: true,
+                message: result.message,
+                data: result.data
+            });
+        } else {
+            res.status(400).json({
+                success: false,
+                message: result.message,
+                error: result.error
+            });
+        }
     } catch (error) {
         console.error('❌ OTP request error:', error);
         res.status(500).json({
@@ -368,28 +371,24 @@ app.post('/api/clubzila/verify-otp', async (req, res) => {
             });
         }
 
-        console.log(`⚠️ Legacy OTP verification for: ${phone_number}`);
-        console.log('💡 This endpoint is deprecated - use /api/clubzila/authenticate instead');
+        console.log(`🔐 Verifying OTP for: ${phone_number}`);
         
-        // Return information about the new flow
-        res.json({
-            success: true,
-            message: 'OTP verification not required - Clubzila uses immediate activation',
-            data: {
-                user_id: `user_${Date.now()}`,
-                auth_id: `auth_${Date.now()}`,
-                user_data: {
-                    phone_number: phone_number,
-                    status: 'active',
-                    verified_at: new Date().toISOString()
-                },
-                is_new_user: false,
-                real_api: true,
-                user_activated: true,
-                requires_otp: false,
-                deprecated: true
-            }
-        });
+        // Use the proper Clubzila OTP verification endpoint
+        const result = await clubzilaIntegration.verifyOtp(phone_number, otp);
+        
+        if (result.success) {
+            res.json({
+                success: true,
+                message: result.message,
+                data: result.data
+            });
+        } else {
+            res.status(400).json({
+                success: false,
+                message: result.message,
+                error: result.error
+            });
+        }
     } catch (error) {
         console.error('❌ OTP verification error:', error);
         res.status(500).json({
