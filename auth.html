@@ -164,16 +164,29 @@
 
                 const result = await response.json();
                 console.log(`📥 Main auth response data:`, result);
+                console.log(`📥 Response structure check:`);
+                console.log(`- result:`, result);
+                console.log(`- result.data:`, result.data);
+                console.log(`- result.data?.user:`, result.data?.user);
+                console.log(`- result.user:`, result.user);
 
                 if (result.success) {
-                    authenticatedUser = result.data.user;
+                    // Check if user data is in result.data.user or result.user
+                    const userData = result.data?.user || result.user;
+                    
+                    if (!userData) {
+                        console.error(`❌ No user data found in response:`, result);
+                        throw new Error('No user data received from server');
+                    }
+                    
+                    authenticatedUser = userData;
                     
                     // Store user session
                     localStorage.setItem('clubzila_user', JSON.stringify({
                         user: authenticatedUser,
                         authenticated_at: new Date().toISOString(),
-                        isActive: result.data.isActive,
-                        isNewUser: result.data.isNewUser
+                        isActive: result.data?.isActive || result.isActive || true,
+                        isNewUser: result.data?.isNewUser || result.isNewUser || true
                     }));
 
                     console.log(`✅ Main authentication successful:`, authenticatedUser);
