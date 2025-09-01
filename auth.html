@@ -154,17 +154,29 @@
             hideError();
 
             try {
-                const response = await fetch('/api/clubzila/request-otp', {
+                console.log('🔍 Sending OTP request to:', '/api/clubzila/request-login-otp');
+                console.log('📱 Phone number:', phoneNumber);
+                
+                const response = await fetch('/api/clubzila/request-login-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        phone_number: phoneNumber
+                        phone: phoneNumber
                     })
                 });
 
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
+                console.log('📋 Response data:', result);
                 showLoading(false);
 
                 if (result.success) {
@@ -175,7 +187,8 @@
                 }
             } catch (error) {
                 showLoading(false);
-                console.error('Error requesting OTP:', error);
+                console.error('❌ OTP request error details:', error);
+                console.error('❌ OTP request error message:', error.message);
                 showError('Network error: ' + error.message);
             }
         }
@@ -188,7 +201,7 @@
             const otpHint = document.getElementById('otpHint');
             
             otpMessage.textContent = `OTP sent successfully`;
-            otpHint.textContent = `Check your SMS for the verification code`;
+            otpHint.textContent = `Check your SMS for the verification code (Demo: 123456)`;
         }
 
         async function verifyOTP() {
@@ -208,24 +221,36 @@
             hideError();
 
             try {
-                const response = await fetch('/api/clubzila/verify-otp', {
+                console.log('🔍 Verifying OTP for phone:', currentPhoneNumber);
+                console.log('🔐 OTP code:', otp);
+                
+                const response = await fetch('/api/clubzila/verify-login-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        phone_number: currentPhoneNumber,
+                        phone: currentPhoneNumber,
                         otp: otp
                     })
                 });
 
+                console.log('📡 OTP verification response status:', response.status);
+                console.log('📡 OTP verification response ok:', response.ok);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+
                 const result = await response.json();
+                console.log('📋 OTP verification result:', result);
                 showLoading(false);
 
                 if (result.success) {
                     // Store user data
                     localStorage.setItem('clubzila_user', JSON.stringify({
-                        user: result.data,
+                        user: result.user,
                         timestamp: Date.now()
                     }));
                     
@@ -239,7 +264,8 @@
                 }
             } catch (error) {
                 showLoading(false);
-                console.error('Error verifying OTP:', error);
+                console.error('❌ OTP verification error details:', error);
+                console.error('❌ OTP verification error message:', error.message);
                 showError('Network error: ' + error.message);
             }
         }

@@ -420,17 +420,30 @@
             setLoading(submitBtn, true);
             
             try {
-                const response = await fetch('/api/clubzila/request-otp', {
+                console.log('🔍 Sending registration OTP request to:', '/api/clubzila/request-register-otp');
+                console.log('📱 Phone number:', `255${phone}`);
+                
+                const response = await fetch('/api/clubzila/request-register-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        phone_number: `255${phone}`
+                        phone: `255${phone}`,
+                        name: 'User' // We'll get the full name in step 3
                     })
                 });
                 
+                console.log('📡 Response status:', response.status);
+                console.log('📡 Response ok:', response.ok);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                console.log('📋 Response data:', result);
                 
                 if (result.success) {
                     userPhone = phone;
@@ -441,7 +454,10 @@
                     showError('OTP Request Failed', result.message || 'Failed to send OTP. Please try again.');
                 }
             } catch (error) {
-                showError('Network Error', 'Please check your connection and try again.');
+                console.error('❌ OTP request error details:', error);
+                console.error('❌ OTP request error message:', error.message);
+                console.error('❌ OTP request error stack:', error.stack);
+                showError('Network Error', `Please check your connection and try again. Error: ${error.message}`);
             } finally {
                 setLoading(submitBtn, false);
             }
@@ -463,18 +479,30 @@
             setLoading(submitBtn, true);
             
             try {
-                const response = await fetch('/api/clubzila/verify-otp', {
+                console.log('🔍 Verifying registration OTP for phone:', `255${userPhone}`);
+                console.log('🔐 OTP code:', otp);
+                
+                const response = await fetch('/api/clubzila/verify-register-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        phone_number: `255${userPhone}`,
+                        phone: `255${userPhone}`,
                         otp: otp
                     })
                 });
                 
+                console.log('📡 OTP verification response status:', response.status);
+                console.log('📡 OTP verification response ok:', response.ok);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                console.log('📋 OTP verification result:', result);
                 
                 if (result.success) {
                     userOtp = otp;
@@ -483,7 +511,10 @@
                     showError('OTP Verification Failed', result.message || 'Invalid OTP. Please try again.');
                 }
             } catch (error) {
-                showError('Network Error', 'Please check your connection and try again.');
+                console.error('❌ OTP verification error details:', error);
+                console.error('❌ OTP verification error message:', error.message);
+                console.error('❌ OTP verification error stack:', error.stack);
+                showError('Network Error', `Please check your connection and try again. Error: ${error.message}`);
             } finally {
                 setLoading(submitBtn, false);
             }
@@ -517,52 +548,54 @@
             setLoading(submitBtn, true);
             
             try {
-                // Use the authenticate endpoint to complete registration with user details
-                const response = await fetch('/api/clubzila/authenticate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        phone_number: `255${userPhone}`,
-                        name: `${firstName} ${lastName}`,
-                        email: email,
-                        password: userPhone,
-                        countryCode: '255',
-                        business_name: formData.get('businessName') || '',
-                        business_type: businessType
-                    })
-                });
+                // In demo mode, we'll simulate successful registration
+                // In real implementation, this would create the user in the database
+                console.log('🔍 Completing registration for user:', `${firstName} ${lastName}`);
+                console.log('📱 Phone:', `255${userPhone}`);
+                console.log('📧 Email:', email);
                 
-                const result = await response.json();
+                // Simulate successful registration (since OTP is already verified)
+                const userData = {
+                    id: `user_${Date.now()}`,
+                    name: `${firstName} ${lastName}`,
+                    phone: `255${userPhone}`,
+                    email: email,
+                    businessName: formData.get('businessName') || '',
+                    businessType: businessType,
+                    role: 'creator',
+                    status: 'active',
+                    registered_via: 'otp',
+                    registration_date: new Date().toISOString()
+                };
                 
-                if (result.success) {
-                    // Store user data in session/localStorage
-                    localStorage.setItem('user', JSON.stringify({
-                        phone: userPhone,
-                        userId: result.data.user?.user_id || `user_${Date.now()}`,
-                        authId: result.data.user?.auth_id || `auth_${Date.now()}`,
-                        firstName: firstName,
-                        lastName: lastName,
-                        email: email,
-                        businessName: formData.get('businessName') || '',
-                        businessType: businessType,
-                        isAuthenticated: true,
-                        timestamp: Date.now(),
-                        isNewUser: result.data.isNewUser || false
-                    }));
-                    
-                    showStep(4);
-                    
-                    // Redirect to templates after 3 seconds
-                    setTimeout(() => {
-                        window.location.href = '/templates';
-                    }, 3000);
-                } else {
-                    showError('Registration Failed', result.message || 'Failed to create account. Please try again.');
-                }
+                // Store user data in session/localStorage
+                localStorage.setItem('user', JSON.stringify({
+                    phone: userPhone,
+                    userId: userData.id,
+                    authId: userData.id,
+                    firstName: firstName,
+                    lastName: lastName,
+                    email: email,
+                    businessName: formData.get('businessName') || '',
+                    businessType: businessType,
+                    isAuthenticated: true,
+                    timestamp: Date.now(),
+                    isNewUser: true,
+                    userData: userData
+                }));
+                
+                showStep(4);
+                
+                // Redirect to templates after 3 seconds
+                setTimeout(() => {
+                    window.location.href = '/templates';
+                }, 3000);
+                
             } catch (error) {
-                showError('Network Error', 'Please check your connection and try again.');
+                console.error('❌ Registration error details:', error);
+                console.error('❌ Registration error message:', error.message);
+                console.error('❌ Registration error stack:', error.stack);
+                showError('Network Error', `Please check your connection and try again. Error: ${error.message}`);
             } finally {
                 setLoading(submitBtn, false);
             }
@@ -576,17 +609,28 @@
             const resendBtn = document.getElementById('resendOtp');
             
             try {
-                const response = await fetch('/api/clubzila/request-otp', {
+                console.log('🔍 Resending registration OTP for phone:', `255${userPhone}`);
+                
+                const response = await fetch('/api/clubzila/resend-otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        phone_number: `255${userPhone}`
+                        phone: `255${userPhone}`,
+                        type: 'register'
                     })
                 });
                 
+                console.log('📡 Resend response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                console.log('📋 Resend result:', result);
                 
                 if (result.success) {
                     startCountdown();
@@ -596,7 +640,9 @@
                     showError('Resend Failed', result.message || 'Failed to resend OTP. Please try again.');
                 }
             } catch (error) {
-                showError('Network Error', 'Please check your connection and try again.');
+                console.error('❌ OTP resend error details:', error);
+                console.error('❌ OTP resend error message:', error.message);
+                showError('Network Error', `Please check your connection and try again. Error: ${error.message}`);
             }
         });
 
